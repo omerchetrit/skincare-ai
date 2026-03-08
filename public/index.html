@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>יועצת טיפוח אישית</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>יועצת הטיפוח האישית שלך ✨</h1>
+      <p>ענה/י על כמה שאלות והעלה/י תמונה — נמצא עבורך את המוצרים המושלמים.</p>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="step-label" id="stepLabel">שלב 1 מתוך 4</div>
+
+    <!-- Steps -->
+    <form id="skincareForm">
+
+      <!-- Step 1: Basic Info -->
+      <div class="step active" id="step1">
+        <h2>נתחיל עם הבסיס</h2>
+
+        <div class="field">
+          <label>גיל *</label>
+          <input type="number" id="age" min="10" max="100" placeholder="לדוגמה: 28" required />
+        </div>
+
+        <div class="field">
+          <label>מין</label>
+          <div class="pills" id="genderPills">
+            <button type="button" class="pill" data-value="female">אישה</button>
+            <button type="button" class="pill" data-value="male">גבר</button>
+            <button type="button" class="pill" data-value="non-binary">נון-בינארי</button>
+            <button type="button" class="pill" data-value="prefer not to say">מעדיפ/ה לא לציין</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>סוג עור *</label>
+          <div class="pills" id="skinTypePills">
+            <button type="button" class="pill" data-value="oily">שמן</button>
+            <button type="button" class="pill" data-value="dry">יבש</button>
+            <button type="button" class="pill" data-value="combination">מעורב</button>
+            <button type="button" class="pill" data-value="normal">רגיל</button>
+            <button type="button" class="pill" data-value="sensitive">רגיש</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn-next" onclick="nextStep(1)">המשך ←</button>
+      </div>
+
+      <!-- Step 2: Skin Concerns -->
+      <div class="step" id="step2">
+        <h2>מה מטרידה אותך בעור שלך?</h2>
+        <p class="hint">ניתן לבחור מספר תשובות</p>
+
+        <div class="pills multi" id="concernsPills">
+          <button type="button" class="pill" data-value="acne">אקנה ופצעונים</button>
+          <button type="button" class="pill" data-value="dryness">יובש</button>
+          <button type="button" class="pill" data-value="oiliness">עודף שמנוניות</button>
+          <button type="button" class="pill" data-value="dark spots">כתמים כהים</button>
+          <button type="button" class="pill" data-value="hyperpigmentation">היפרפיגמנטציה</button>
+          <button type="button" class="pill" data-value="fine lines">קמטים וקמטוטים</button>
+          <button type="button" class="pill" data-value="redness">אדמומיות</button>
+          <button type="button" class="pill" data-value="large pores">נקבוביות מורחבות</button>
+          <button type="button" class="pill" data-value="uneven texture">מרקם לא אחיד</button>
+          <button type="button" class="pill" data-value="dullness">עור עמום וחסר ברק</button>
+          <button type="button" class="pill" data-value="dark circles">עיגולים כהים</button>
+          <button type="button" class="pill" data-value="eczema">אקזמה / פסוריאזיס</button>
+        </div>
+
+        <div class="field">
+          <label>רגישויות או אלרגיות ידועות?</label>
+          <input type="text" id="sensitivities" placeholder="לדוגמה: בשמים, רטינול, אגוזים..." />
+        </div>
+
+        <div class="nav-row">
+          <button type="button" class="btn-next" onclick="nextStep(2)">המשך ←</button>
+          <button type="button" class="btn-back" onclick="prevStep(2)">→ חזור</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Current Routine -->
+      <div class="step" id="step3">
+        <h2>ספר/י לנו על שגרת הטיפוח שלך</h2>
+        <p class="hint">אם אין לך שגרה קבועה — אפשר לדלג</p>
+
+        <div class="field">
+          <label>שגרת בוקר</label>
+          <textarea id="morningRoutine" rows="3" placeholder="לדוגמה: ניקוי → סרום ויטמין C → קרם הגנה"></textarea>
+        </div>
+
+        <div class="field">
+          <label>שגרת לילה</label>
+          <textarea id="eveningRoutine" rows="3" placeholder="לדוגמה: ניקוי שמן → רטינול → קרם לחות"></textarea>
+        </div>
+
+        <div class="nav-row">
+          <button type="button" class="btn-next" onclick="nextStep(3)">המשך ←</button>
+          <button type="button" class="btn-back" onclick="prevStep(3)">→ חזור</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Photo Upload -->
+      <div class="step" id="step4">
+        <h2>העלה/י תמונה של הפנים שלך</h2>
+        <p class="hint">אור טבעי, ללא איפור — כך נוכל לראות את העור שלך בצורה הטובה ביותר. התמונה לא נשמרת בשרת.</p>
+
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('photoInput').click()">
+          <div class="upload-icon">📷</div>
+          <p>לחץ/י להעלאה או גרור/י לכאן</p>
+          <p class="upload-sub">JPEG, PNG או WebP — עד 10MB</p>
+          <img id="photoPreview" src="" alt="" style="display:none;" />
+        </div>
+        <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" />
+
+        <div class="privacy-note">🔒 התמונה נשלחת בצורה מאובטחת לניתוח בלבד ואינה נשמרת בשרתינו.</div>
+
+        <div class="nav-row">
+          <button type="button" class="btn-submit" id="submitBtn" onclick="submitForm()">
+            ✨ קבל/י המלצות אישיות
+          </button>
+          <button type="button" class="btn-back" onclick="prevStep(4)">→ חזור</button>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Loading State -->
+    <div class="loading" id="loading" style="display:none;">
+      <div class="spinner"></div>
+      <h2>מנתחת את העור שלך...</h2>
+      <p>הבינה המלאכותית שלנו בוחנת את התמונה ומוצאת את המוצרים המתאימים ביותר עבורך. זה לוקח כ-15–30 שניות.</p>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="results" style="display:none;">
+      <div class="results-header">
+        <h2>הדו"ח האישי שלך 🌿</h2>
+      </div>
+
+      <!-- Skin Analysis -->
+      <div class="analysis-card" id="analysisCard"></div>
+
+      <!-- Recommendations -->
+      <h3 class="section-title">המוצרים המומלצים עבורך</h3>
+      <div class="products-grid" id="productsGrid"></div>
+
+      <!-- Routine -->
+      <div class="routine-card" id="routineCard"></div>
+
+      <!-- Restart -->
+      <button class="btn-restart" onclick="restart()">התחל/י מחדש</button>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" id="errorBox" style="display:none;">
+      <p id="errorMsg"></p>
+      <button class="btn-back" onclick="showError(false)">נסה/י שוב</button>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
