@@ -19,7 +19,7 @@
     <div class="progress-bar" id="progressBar">
       <div class="progress-fill" id="progressFill"></div>
     </div>
-    <div class="step-label" id="stepLabel">שלב 1 מתוך 3</div>
+    <div class="step-label" id="stepLabel">שלב 1 מתוך 4</div>
 
     <!-- Steps -->
     <form id="skincareForm">
@@ -93,8 +93,28 @@
         </div>
       </div>
 
-      <!-- Step 3: Photo Upload -->
+      <!-- Step 3: Texture Preference -->
       <div class="step" id="step3">
+        <h2>איזה מרקם קרם את/ה אוהב/ת?</h2>
+        <p class="hint">זה עוזר לנו להמליץ על מוצרים שתרצי/ה להשתמש בהם</p>
+
+        <div class="pills" id="texturePills">
+          <button type="button" class="pill pill-large" data-value="light">
+            קליל 🌊<br/><span class="pill-sub">נספג מהר, לא משאיר תחושת שומן</span>
+          </button>
+          <button type="button" class="pill pill-large" data-value="rich">
+            עשיר 🧴<br/><span class="pill-sub">מזין ועוטף, אידיאלי לעור יבש</span>
+          </button>
+        </div>
+
+        <div class="nav-row">
+          <button type="button" class="btn-next" onclick="nextStep(3)">המשך ←</button>
+          <button type="button" class="btn-back" onclick="prevStep(3)">→ חזור</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Photo Upload -->
+      <div class="step" id="step4">
         <h2>העלה/י תמונה של הפנים שלך</h2>
         <p class="hint">אופציונלי — אבל ממליצים! אור טבעי, ללא איפור — כך נוכל לראות את העור שלך בצורה הטובה ביותר.</p>
 
@@ -112,7 +132,7 @@
           <button type="button" class="btn-submit" id="submitBtn" onclick="submitForm()">
             ✨ קבל/י המלצות אישיות
           </button>
-          <button type="button" class="btn-back" onclick="prevStep(3)">→ חזור</button>
+          <button type="button" class="btn-back" onclick="prevStep(4)">→ חזור</button>
         </div>
       </div>
 

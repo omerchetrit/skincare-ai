@@ -1,9 +1,10 @@
 // State
 let currentStep = 1;
-const totalSteps = 3;
+const totalSteps = 4;
 let gender = "";
 let skinType = "";
 let concerns = [];
+let texturePreference = "";
 let photoDataUrl = "";
 
 // --- Navigation ---
@@ -53,7 +54,7 @@ function validateStep(step) {
       valid = false;
     }
   }
-  // Step 3 (photo) is optional — no validation needed
+  // Step 4 (photo) is optional — no validation needed
   return valid;
 }
 
@@ -201,6 +202,7 @@ async function submitForm() {
     skinType,
     concerns,
     sensitivities: document.getElementById("sensitivities").value,
+    texturePreference,
     photo: photoDataUrl || null,
   };
 
@@ -307,6 +309,7 @@ function restart() {
   gender = "";
   skinType = "";
   concerns.length = 0;
+  texturePreference = "";
   photoDataUrl = "";
   document.getElementById("age").value = "";
   document.getElementById("sensitivities").value = "";
@@ -330,6 +333,7 @@ function restart() {
 
 // --- Init ---
 setupSinglePills("genderPills", (v) => (gender = v));
+setupSinglePills("texturePills", (v) => (texturePreference = v));
 setupSinglePills("skinTypePills", (v) => {
   const otherInput = document.getElementById("skinTypeOther");
   if (v === "other") {

@@ -12,26 +12,29 @@ app.use(express.static("public"));
 // POST /api/recommend
 // Body: { age, gender, skinType, concerns[], sensitivities, routine, photo: "data:image/jpeg;base64,..." }
 app.post("/api/recommend", async (req, res) => {
-  const { age, gender, skinType, concerns, sensitivities, routine, photo } = req.body;
+  const { age, gender, skinType, concerns, sensitivities, texturePreference, photo } = req.body;
 
   if (!age || !skinType || !concerns?.length) {
     return res.status(400).json({ error: "גיל, סוג עור ומאפיינים הם שדות חובה." });
   }
 
-  // Parse base64 photo
-  const match = photo.match(/^data:(.+);base64,(.+)$/);
-  if (!match) return res.status(400).json({ error: "Invalid photo format" });
-  const [, photoMimeType, photoBase64] = match;
-
-  const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-  if (!allowedTypes.includes(photoMimeType)) {
-    return res.status(400).json({ error: "Photo must be JPEG, PNG, GIF, or WebP" });
+  // Parse base64 photo (optional)
+  let photoBase64 = null;
+  let photoMimeType = null;
+  if (photo) {
+    const match = photo.match(/^data:(.+);base64,(.+)$/);
+    if (!match) return res.status(400).json({ error: "פורמט תמונה לא תקין." });
+    [, photoMimeType, photoBase64] = match;
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    if (!allowedTypes.includes(photoMimeType)) {
+      return res.status(400).json({ error: "יש לשלוח תמונה מסוג JPEG, PNG או WebP." });
+    }
   }
 
   try {
     const products = await getProducts();
     if (!products.length) {
-      return res.status(503).json({ error: "Could not load product catalog" });
+      return res.status(503).json({ error: "לא הצלחנו לטעון את קטלוג המוצרים. נסה/י שוב." });
     }
 
     const result = await analyzeAndRecommend({
@@ -40,7 +43,7 @@ app.post("/api/recommend", async (req, res) => {
       skinType,
       concerns,
       sensitivities,
-      routine,
+      texturePreference,
       photoBase64,
       photoMimeType,
       products,
