@@ -29,8 +29,9 @@
         <h2>נתחיל עם הבסיס</h2>
 
         <div class="field">
-          <label>גיל *</label>
-          <input type="number" id="age" min="10" max="100" placeholder="לדוגמה: 28" required />
+          <label for="age">גיל *</label>
+          <input type="number" id="age" min="10" max="100" placeholder="לדוגמה: 28" inputmode="numeric" required />
+          <span class="field-error" id="ageError"></span>
         </div>
 
         <div class="field">
@@ -52,6 +53,7 @@
             <button type="button" class="pill" data-value="normal">רגיל</button>
             <button type="button" class="pill" data-value="sensitive">רגיש</button>
           </div>
+          <span class="field-error" id="skinTypeError"></span>
         </div>
 
         <button type="button" class="btn-next" onclick="nextStep(1)">המשך ←</button>
@@ -62,6 +64,7 @@
         <h2>מה מטרידה אותך בעור שלך?</h2>
         <p class="hint">ניתן לבחור מספר תשובות</p>
 
+        <span class="field-error" id="concernsError"></span>
         <div class="pills multi" id="concernsPills">
           <button type="button" class="pill" data-value="acne">אקנה ופצעונים</button>
           <button type="button" class="pill" data-value="dryness">יובש</button>
@@ -78,7 +81,7 @@
         </div>
 
         <div class="field">
-          <label>רגישויות או אלרגיות ידועות?</label>
+          <label for="sensitivities">רגישויות או אלרגיות ידועות?</label>
           <input type="text" id="sensitivities" placeholder="לדוגמה: בשמים, רטינול, אגוזים..." />
         </div>
 
@@ -94,12 +97,12 @@
         <p class="hint">אם אין לך שגרה קבועה — אפשר לדלג</p>
 
         <div class="field">
-          <label>שגרת בוקר</label>
+          <label for="morningRoutine">שגרת בוקר</label>
           <textarea id="morningRoutine" rows="3" placeholder="לדוגמה: ניקוי → סרום ויטמין C → קרם הגנה"></textarea>
         </div>
 
         <div class="field">
-          <label>שגרת לילה</label>
+          <label for="eveningRoutine">שגרת לילה</label>
           <textarea id="eveningRoutine" rows="3" placeholder="לדוגמה: ניקוי שמן → רטינול → קרם לחות"></textarea>
         </div>
 

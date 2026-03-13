@@ -44,10 +44,13 @@ body {
 }
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #c9836a, #a0614d);
+  background: linear-gradient(270deg, #c9836a, #a0614d);
   border-radius: 2px;
   transition: width 0.4s ease;
   width: 25%;
+  margin-right: auto;
+  margin-left: 0;
+  float: right;
 }
 .step-label {
   text-align: right;
@@ -350,6 +353,15 @@ body {
   transition: all 0.2s;
 }
 .btn-restart:hover { border-color: #c9836a; color: #c9836a; }
+
+/* Inline field errors */
+.field-error {
+  display: block;
+  font-size: 0.82rem;
+  color: #c0392b;
+  margin-top: 6px;
+  min-height: 1em;
+}
 
 /* Error */
 .error-box {

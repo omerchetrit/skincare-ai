@@ -25,31 +25,41 @@ function prevStep(from) {
   goToStep(from - 1);
 }
 
+function setError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = msg;
+}
+function clearErrors() {
+  document.querySelectorAll(".field-error").forEach((el) => (el.textContent = ""));
+}
+
 function validateStep(step) {
+  clearErrors();
+  let valid = true;
   if (step === 1) {
     const age = document.getElementById("age").value;
     if (!age || age < 10 || age > 100) {
-      alert("נא להזין גיל תקין.");
-      return false;
+      setError("ageError", "נא להזין גיל תקין (10–100).");
+      valid = false;
     }
     if (!skinType) {
-      alert("נא לבחור סוג עור.");
-      return false;
+      setError("skinTypeError", "נא לבחור סוג עור.");
+      valid = false;
     }
   }
   if (step === 2) {
     if (!concerns.length) {
-      alert("נא לבחור לפחות בעיה אחת.");
-      return false;
+      setError("concernsError", "נא לבחור לפחות בעיה אחת.");
+      valid = false;
     }
   }
   if (step === 4) {
     if (!photoDataUrl) {
       alert("נא להעלות תמונה של הפנים.");
-      return false;
+      valid = false;
     }
   }
-  return true;
+  return valid;
 }
 
 // --- Single-select pills ---
@@ -88,7 +98,7 @@ function setupPhotoUpload() {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
-      alert("Photo must be under 10MB.");
+      alert("התמונה חייבת להיות קטנה מ-10MB.");
       return;
     }
     const reader = new FileReader();
@@ -218,7 +228,7 @@ function showError(show, msg = "") {
   const box = document.getElementById("errorBox");
   if (show) {
     document.getElementById("loading").style.display = "none";
-    document.getElementById("errorMsg").textContent = msg || "Something went wrong. Please try again.";
+    document.getElementById("errorMsg").textContent = msg || "משהו השתבש. נסה/י שוב.";
     box.style.display = "block";
     // Re-show form elements
     document.getElementById("skincareForm").style.display = "block";
