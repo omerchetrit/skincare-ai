@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { BUSINESS_RULES } from "./business-rules.js";
+import { PRODUCT_KNOWLEDGE } from "./product-knowledge.js";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -61,7 +62,9 @@ ${userProfile}
 
 ${businessRules}
 
-PRODUCT CATALOG:
+${PRODUCT_KNOWLEDGE}
+
+LIVE PRODUCT CATALOG (with current prices and URLs — use exact names from here):
 ${productCatalog}
 
 Respond with this exact JSON structure:
