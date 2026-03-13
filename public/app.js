@@ -12,7 +12,11 @@ function goToStep(n) {
   currentStep = n;
   document.querySelector(`#step${currentStep}`).classList.add("active");
   document.getElementById("progressFill").style.width = `${(currentStep / totalSteps) * 100}%`;
-  document.getElementById("stepLabel").textContent = `שלב ${currentStep} מתוך ${totalSteps}`;
+  document.querySelectorAll(".step-dot").forEach((dot) => {
+    const s = parseInt(dot.dataset.step);
+    dot.classList.toggle("active", s === currentStep);
+    dot.classList.toggle("done", s < currentStep);
+  });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -25,27 +29,42 @@ function prevStep(from) {
   goToStep(from - 1);
 }
 
+function setFieldError(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+}
+
+function clearErrors(...ids) {
+  ids.forEach((id) => setFieldError(id, ""));
+}
+
 function validateStep(step) {
   if (step === 1) {
+    clearErrors("ageError", "skinTypeError");
     const age = document.getElementById("age").value;
+    let valid = true;
     if (!age || age < 10 || age > 100) {
-      alert("נא להזין גיל תקין.");
-      return false;
+      setFieldError("ageError", "נא להזין גיל תקין (10–100).");
+      valid = false;
     }
     if (!skinType) {
-      alert("נא לבחור סוג עור.");
-      return false;
+      setFieldError("skinTypeError", "נא לבחור סוג עור.");
+      valid = false;
     }
+    return valid;
   }
   if (step === 2) {
+    clearErrors("concernsError");
     if (!concerns.length) {
-      alert("נא לבחור לפחות בעיה אחת.");
+      setFieldError("concernsError", "נא לבחור לפחות בעיה אחת.");
       return false;
     }
   }
   if (step === 4) {
+    clearErrors("photoError");
     if (!photoDataUrl) {
-      alert("נא להעלות תמונה של הפנים.");
+      setFieldError("photoError", "נא להעלות תמונה של הפנים.");
       return false;
     }
   }
@@ -88,7 +107,7 @@ function setupPhotoUpload() {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
-      alert("Photo must be under 10MB.");
+      setFieldError("photoError", "התמונה גדולה מדי — מקסימום 10MB.");
       return;
     }
     const reader = new FileReader();
@@ -141,8 +160,7 @@ async function submitForm() {
   // Show loading
   document.getElementById("skincareForm").style.display = "none";
   document.getElementById("progressBar").style.display = "none";
-  document.getElementById("stepLabel").style.display = "none";
-  document.querySelector(".header").style.display = "none";
+  document.getElementById("stepDots").style.display = "none";
   document.getElementById("loading").style.display = "block";
 
   try {
@@ -195,7 +213,7 @@ function showResults(data) {
           <div class="product-price">${p.product_price}</div>
           <div class="product-reason">${p.reason}</div>
           <div class="product-how">💡 ${p.how_to_use}</div>
-          ${p.product_url ? `<a class="product-link" href="${p.product_url}" target="_blank">← לעמוד המוצר</a>` : ""}
+          ${p.product_url ? `<a class="product-link" href="${p.product_url}" target="_blank">לעמוד המוצר ↗</a>` : ""}
         </div>
       </div>
     `;
@@ -218,15 +236,14 @@ function showError(show, msg = "") {
   const box = document.getElementById("errorBox");
   if (show) {
     document.getElementById("loading").style.display = "none";
-    document.getElementById("errorMsg").textContent = msg || "Something went wrong. Please try again.";
+    document.getElementById("errorMsg").textContent = msg || "משהו השתבש. אנא נסה/י שוב.";
     box.style.display = "block";
-    // Re-show form elements
-    document.getElementById("skincareForm").style.display = "block";
-    document.getElementById("progressBar").style.display = "block";
-    document.getElementById("stepLabel").style.display = "block";
-    document.querySelector(".header").style.display = "block";
   } else {
     box.style.display = "none";
+    // Re-show form when user clicks retry
+    document.getElementById("skincareForm").style.display = "block";
+    document.getElementById("progressBar").style.display = "block";
+    document.getElementById("stepDots").style.display = "flex";
   }
 }
 
@@ -235,8 +252,7 @@ function restart() {
   document.getElementById("results").style.display = "none";
   document.getElementById("skincareForm").style.display = "block";
   document.getElementById("progressBar").style.display = "block";
-  document.getElementById("stepLabel").style.display = "block";
-  document.querySelector(".header").style.display = "block";
+  document.getElementById("stepDots").style.display = "flex";
 
   // Reset state
   gender = "";

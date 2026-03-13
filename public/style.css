@@ -41,6 +41,7 @@ body {
   background: #e8ddd8;
   border-radius: 2px;
   margin-bottom: 6px;
+  direction: ltr;
 }
 .progress-fill {
   height: 100%;
@@ -49,11 +50,26 @@ body {
   transition: width 0.4s ease;
   width: 25%;
 }
-.step-label {
-  text-align: right;
-  font-size: 0.8rem;
-  color: #9a8880;
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
   margin-bottom: 28px;
+}
+.step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e8ddd8;
+  transition: background 0.3s, transform 0.3s;
+}
+.step-dot.done {
+  background: #c9836a55;
+}
+.step-dot.active {
+  background: #c9836a;
+  transform: scale(1.4);
 }
 
 /* Steps */
@@ -103,6 +119,12 @@ body {
 .field input:focus,
 .field textarea:focus {
   border-color: #c9836a;
+}
+.field-error {
+  font-size: 0.82rem;
+  color: #c0392b;
+  margin-top: 6px;
+  min-height: 1em;
 }
 
 /* Pills */
@@ -193,6 +215,7 @@ body {
 
 .btn-back {
   padding: 12px 20px;
+  min-width: 88px;
   background: transparent;
   color: #9a8880;
   border: 1.5px solid #ddd5cf;
@@ -291,14 +314,14 @@ body {
 .badge-bonus { background: #b4a8d0; }
 
 .product-image {
-  width: 90px;
-  min-width: 90px;
+  width: 110px;
+  min-width: 110px;
   object-fit: cover;
   background: #f5eeea;
 }
 .product-image-placeholder {
-  width: 90px;
-  min-width: 90px;
+  width: 110px;
+  min-width: 110px;
   background: linear-gradient(135deg, #f5eeea, #ede5e0);
   display: flex;
   align-items: center;
@@ -334,7 +357,7 @@ body {
   margin-bottom: 28px;
 }
 .routine-card h3 { color: #4a3728; margin-bottom: 10px; }
-.routine-card p { color: #6a5a50; font-size: 0.92rem; line-height: 1.65; }
+.routine-card p { color: #6a5a50; font-size: 0.92rem; line-height: 1.65; white-space: pre-line; }
 
 .btn-restart {
   display: block;
