@@ -97,8 +97,8 @@ function setupPhotoUpload() {
   input.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 10 * 1024 * 1024) {
-      alert("התמונה חייבת להיות קטנה מ-10MB.");
+    if (file.size > 25 * 1024 * 1024) {
+      alert("התמונה שבחרת כבדה מדי (מעל 25MB). נסי לשלוח תמונה שצולמה בפחות זום, או לשמור אותה עם איכות מעט נמוכה יותר.");
       return;
     }
     const reader = new FileReader();
@@ -268,6 +268,19 @@ function restart() {
 
 // --- Init ---
 setupSinglePills("genderPills", (v) => (gender = v));
-setupSinglePills("skinTypePills", (v) => (skinType = v));
+setupSinglePills("skinTypePills", (v) => {
+  const otherInput = document.getElementById("skinTypeOther");
+  if (v === "other") {
+    otherInput.style.display = "block";
+    otherInput.focus();
+    skinType = otherInput.value.trim() || "other";
+    otherInput.addEventListener("input", () => {
+      skinType = otherInput.value.trim() || "other";
+    });
+  } else {
+    otherInput.style.display = "none";
+    skinType = v;
+  }
+});
 setupMultiPills("concernsPills", concerns);
 setupPhotoUpload();

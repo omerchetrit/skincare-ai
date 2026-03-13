@@ -52,7 +52,9 @@
             <button type="button" class="pill" data-value="combination">מעורב</button>
             <button type="button" class="pill" data-value="normal">רגיל</button>
             <button type="button" class="pill" data-value="sensitive">רגיש</button>
+            <button type="button" class="pill" data-value="other">אחר</button>
           </div>
+          <input type="text" id="skinTypeOther" placeholder="תאר/י את סוג העור שלך..." style="display:none; margin-top:10px;" />
           <span class="field-error" id="skinTypeError"></span>
         </div>
 
@@ -61,7 +63,7 @@
 
       <!-- Step 2: Skin Concerns -->
       <div class="step" id="step2">
-        <h2>מה מטרידה אותך בעור שלך?</h2>
+        <h2>מה מאפיין את העור שלך?</h2>
         <p class="hint">ניתן לבחור מספר תשובות</p>
 
         <span class="field-error" id="concernsError"></span>
@@ -98,12 +100,12 @@
 
         <div class="field">
           <label for="morningRoutine">שגרת בוקר</label>
-          <textarea id="morningRoutine" rows="3" placeholder="לדוגמה: ניקוי → סרום ויטמין C → קרם הגנה"></textarea>
+          <textarea id="morningRoutine" rows="3" placeholder="לדוגמה: ניקוי ← סרום ויטמין C ← קרם הגנה"></textarea>
         </div>
 
         <div class="field">
           <label for="eveningRoutine">שגרת לילה</label>
-          <textarea id="eveningRoutine" rows="3" placeholder="לדוגמה: ניקוי שמן → רטינול → קרם לחות"></textarea>
+          <textarea id="eveningRoutine" rows="3" placeholder="לדוגמה: ניקוי שמן ← רטינול ← קרם לחות"></textarea>
         </div>
 
         <div class="nav-row">
@@ -120,7 +122,7 @@
         <div class="upload-area" id="uploadArea" onclick="document.getElementById('photoInput').click()">
           <div class="upload-icon">📷</div>
           <p>לחץ/י להעלאה או גרור/י לכאן</p>
-          <p class="upload-sub">JPEG, PNG או WebP — עד 10MB</p>
+          <p class="upload-sub">JPEG, PNG או WebP — עד 25MB</p>
           <img id="photoPreview" src="" alt="" style="display:none;" />
         </div>
         <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" />

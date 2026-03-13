@@ -6,7 +6,7 @@ import { analyzeAndRecommend } from "./services/claude.js";
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: "20mb" })); // photos can be large
+app.use(express.json({ limit: "35mb" })); // photos up to 25MB → ~34MB base64
 app.use(express.static("public"));
 
 // POST /api/recommend
