@@ -4,7 +4,7 @@ import { PRODUCT_KNOWLEDGE } from "./product-knowledge.js";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-export async function analyzeAndRecommend({ age, gender, skinType, concerns, sensitivities, texturePreference, photoBase64, photoMimeType, products }) {
+export async function analyzeAndRecommend({ age, gender, skinType, concerns, sensitivities, texturePreference, pregnancyStatus, photoBase64, photoMimeType, products }) {
   const productCatalog = products
     .map((p, i) => {
       const kitLabel = p.isKit
@@ -19,13 +19,19 @@ export async function analyzeAndRecommend({ age, gender, skinType, concerns, sen
     })
     .join("\n\n");
 
+  const pregnancyLabel =
+    pregnancyStatus === "pregnant" ? "pregnant"
+    : pregnancyStatus === "breastfeeding" ? "breastfeeding"
+    : "not pregnant / not breastfeeding";
+
   const userProfile = `
 Age: ${age}
 Gender: ${gender || "not specified"}
 Self-described skin type: ${skinType}
 Main concerns: ${concerns.join(", ")}
 Sensitivities/allergies: ${sensitivities || "none mentioned"}
-Texture preference: ${texturePreference === "light" ? "light/fast-absorbing" : texturePreference === "rich" ? "rich/nourishing" : "no preference stated"}`.trim();
+Texture preference: ${texturePreference === "light" ? "light/fast-absorbing" : texturePreference === "rich" ? "rich/nourishing" : "no preference stated"}
+Pregnancy / breastfeeding status: ${pregnancyLabel}`.trim();
 
   // Business rules come from services/business-rules.js (single source of truth).
   // We append the dynamic texture preference here.

@@ -68,4 +68,14 @@ SPECIAL CONDITIONS:
 - אם יש אטופיק דרמטיטיס או סבוריאה — להמליץ על מארז יום ולילה.
 
 TOTAL PRODUCTS: Recommend between 3 and 6 products. Only include products from the catalog that genuinely match.
+
+PREGNANCY & BREASTFEEDING SAFETY:
+- If the user is pregnant or breastfeeding, apply strict ingredient safety rules.
+- DO NOT recommend products containing: retinol / vitamin A derivatives, salicylic acid (BHA), cobra peptide (COBRA serum or COBRA cream — avoid both).
+- Safe to recommend: hyaluronic acid, niacinamide, vitamin C, vitamin E, peptides (non-cobra), aloe vera, squalane, azelaic acid (at standard concentrations).
+- The סרום לילה יוזו contains azelaic acid and niacinamide — generally considered safe in pregnancy, but note it in how_to_use.
+- The COBRA serum and COBRA cream both contain cobra peptide — NEVER recommend these to pregnant or breastfeeding users.
+- The סרום מולטי ויטמין contains vitamin A (retinol) — NEVER recommend to pregnant or breastfeeding users.
+- Any kit containing COBRA products (COBRA Kit, גזע + קוברה, Day Night Cobra) must also be avoided.
+- If the user is pregnant/breastfeeding, mention in your routine_suggestion that the recommendations are adapted for pregnancy/breastfeeding safety.
 `;

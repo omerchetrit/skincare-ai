@@ -5,6 +5,7 @@ let gender = "";
 let skinType = "";
 let concerns = [];
 let texturePreference = "";
+let pregnancyStatus = "";
 let photoDataUrl = "";
 
 // --- Navigation ---
@@ -203,6 +204,7 @@ async function submitForm() {
     concerns,
     sensitivities: document.getElementById("sensitivities").value,
     texturePreference,
+    pregnancyStatus,
     photo: photoDataUrl || null,
   };
 
@@ -310,6 +312,7 @@ function restart() {
   skinType = "";
   concerns.length = 0;
   texturePreference = "";
+  pregnancyStatus = "";
   photoDataUrl = "";
   document.getElementById("age").value = "";
   document.getElementById("sensitivities").value = "";
@@ -334,6 +337,7 @@ function restart() {
 // --- Init ---
 setupSinglePills("genderPills", (v) => (gender = v));
 setupSinglePills("texturePills", (v) => (texturePreference = v));
+setupSinglePills("pregnancyPills", (v) => (pregnancyStatus = v));
 setupSinglePills("skinTypePills", (v) => {
   const otherInput = document.getElementById("skinTypeOther");
   if (v === "other") {
