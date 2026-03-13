@@ -88,29 +88,66 @@ function setupMultiPills(containerId, arr) {
   });
 }
 
+// --- Image compression (keeps quality high, reduces size for API) ---
+function compressImage(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Resize to max 2048px on the longest side (keeps detail, cuts weight)
+        const MAX_DIM = 2048;
+        let { width, height } = img;
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) { height = Math.round((height * MAX_DIM) / width); width = MAX_DIM; }
+          else { width = Math.round((width * MAX_DIM) / height); height = MAX_DIM; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+
+        // Reduce JPEG quality until image is under 4MB (Claude API limit is 5MB)
+        let quality = 0.88;
+        let dataUrl;
+        do {
+          dataUrl = canvas.toDataURL("image/jpeg", quality);
+          const bytes = (dataUrl.length - dataUrl.indexOf(",") - 1) * 0.75;
+          if (bytes < 4 * 1024 * 1024) break;
+          quality -= 0.08;
+        } while (quality > 0.1);
+
+        resolve(dataUrl);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 // --- Photo upload ---
 function setupPhotoUpload() {
   const input = document.getElementById("photoInput");
   const area = document.getElementById("uploadArea");
   const preview = document.getElementById("photoPreview");
 
-  input.addEventListener("change", (e) => {
+  input.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 25 * 1024 * 1024) {
       alert("התמונה שבחרת כבדה מדי (מעל 25MB). נסי לשלוח תמונה שצולמה בפחות זום, או לשמור אותה עם איכות מעט נמוכה יותר.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      photoDataUrl = ev.target.result;
-      preview.src = photoDataUrl;
-      preview.style.display = "block";
-      area.querySelector(".upload-icon").style.display = "none";
-      area.querySelectorAll("p").forEach((p) => (p.style.display = "none"));
-      area.classList.add("has-photo");
-    };
-    reader.readAsDataURL(file);
+
+    // Show loading state while compressing
+    area.querySelector(".upload-icon").textContent = "⏳";
+    const compressed = await compressImage(file);
+    photoDataUrl = compressed;
+    preview.src = photoDataUrl;
+    preview.style.display = "block";
+    area.querySelector(".upload-icon").style.display = "none";
+    area.querySelectorAll("p").forEach((p) => (p.style.display = "none"));
+    area.classList.add("has-photo");
   });
 
   // Drag & drop
