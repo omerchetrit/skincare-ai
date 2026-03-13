@@ -1,6 +1,6 @@
 // State
 let currentStep = 1;
-const totalSteps = 4;
+const totalSteps = 3;
 let gender = "";
 let skinType = "";
 let concerns = [];
@@ -49,16 +49,11 @@ function validateStep(step) {
   }
   if (step === 2) {
     if (!concerns.length) {
-      setError("concernsError", "נא לבחור לפחות בעיה אחת.");
+      setError("concernsError", "נא לבחור לפחות מאפיין אחד.");
       valid = false;
     }
   }
-  if (step === 4) {
-    if (!photoDataUrl) {
-      alert("נא להעלות תמונה של הפנים.");
-      valid = false;
-    }
-  }
+  // Step 3 (photo) is optional — no validation needed
   return valid;
 }
 
@@ -88,36 +83,42 @@ function setupMultiPills(containerId, arr) {
   });
 }
 
-// --- Image compression (keeps quality high, reduces size for API) ---
+// --- Image compression (keeps quality high, stays under Claude API 5MB limit) ---
 function compressImage(file) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
+    reader.onerror = () => reject(new Error("לא ניתן לקרוא את הקובץ"));
     reader.onload = (e) => {
       const img = new Image();
+      img.onerror = () => reject(new Error("לא ניתן לפתוח את התמונה"));
       img.onload = () => {
-        // Resize to max 2048px on the longest side (keeps detail, cuts weight)
-        const MAX_DIM = 2048;
-        let { width, height } = img;
-        if (width > MAX_DIM || height > MAX_DIM) {
-          if (width > height) { height = Math.round((height * MAX_DIM) / width); width = MAX_DIM; }
-          else { width = Math.round((width * MAX_DIM) / height); height = MAX_DIM; }
+        try {
+          // Resize to max 2048px on longest side
+          const MAX_DIM = 2048;
+          let { width, height } = img;
+          if (width > MAX_DIM || height > MAX_DIM) {
+            if (width > height) { height = Math.round((height * MAX_DIM) / width); width = MAX_DIM; }
+            else { width = Math.round((width * MAX_DIM) / height); height = MAX_DIM; }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+
+          // Reduce JPEG quality until under 4MB (Claude API cap is 5MB)
+          let quality = 0.88;
+          let dataUrl;
+          do {
+            dataUrl = canvas.toDataURL("image/jpeg", quality);
+            const bytes = (dataUrl.length - dataUrl.indexOf(",") - 1) * 0.75;
+            if (bytes < 4 * 1024 * 1024) break;
+            quality -= 0.08;
+          } while (quality > 0.1);
+
+          resolve(dataUrl);
+        } catch (err) {
+          reject(err);
         }
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
-
-        // Reduce JPEG quality until image is under 4MB (Claude API limit is 5MB)
-        let quality = 0.88;
-        let dataUrl;
-        do {
-          dataUrl = canvas.toDataURL("image/jpeg", quality);
-          const bytes = (dataUrl.length - dataUrl.indexOf(",") - 1) * 0.75;
-          if (bytes < 4 * 1024 * 1024) break;
-          quality -= 0.08;
-        } while (quality > 0.1);
-
-        resolve(dataUrl);
       };
       img.src = e.target.result;
     };
@@ -130,24 +131,49 @@ function setupPhotoUpload() {
   const input = document.getElementById("photoInput");
   const area = document.getElementById("uploadArea");
   const preview = document.getElementById("photoPreview");
+  const icon = area.querySelector(".upload-icon");
+
+  function resetUploadArea() {
+    icon.textContent = "📷";
+    icon.style.display = "";
+    area.querySelectorAll("p").forEach((p) => (p.style.display = ""));
+    preview.style.display = "none";
+    preview.src = "";
+    area.classList.remove("has-photo");
+    photoDataUrl = "";
+  }
+
+  // Allow re-clicking the photo to change it
+  preview.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetUploadArea();
+    input.value = "";
+  });
 
   input.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 25 * 1024 * 1024) {
-      alert("התמונה שבחרת כבדה מדי (מעל 25MB). נסי לשלוח תמונה שצולמה בפחות זום, או לשמור אותה עם איכות מעט נמוכה יותר.");
+      alert("התמונה שבחרת כבדה מדי (מעל 25MB). נסי לשלוח תמונה שצולמה בפחות זום.");
       return;
     }
 
-    // Show loading state while compressing
-    area.querySelector(".upload-icon").textContent = "⏳";
-    const compressed = await compressImage(file);
-    photoDataUrl = compressed;
-    preview.src = photoDataUrl;
-    preview.style.display = "block";
-    area.querySelector(".upload-icon").style.display = "none";
-    area.querySelectorAll("p").forEach((p) => (p.style.display = "none"));
-    area.classList.add("has-photo");
+    // Show spinner while compressing
+    icon.textContent = "⏳";
+    icon.style.display = "";
+
+    try {
+      const compressed = await compressImage(file);
+      photoDataUrl = compressed;
+      preview.src = photoDataUrl;
+      preview.style.display = "block";
+      icon.style.display = "none";
+      area.querySelectorAll("p").forEach((p) => (p.style.display = "none"));
+      area.classList.add("has-photo");
+    } catch (err) {
+      icon.textContent = "📷";
+      alert("לא הצלחנו לעבד את התמונה. נסי תמונה אחרת.");
+    }
   });
 
   // Drag & drop
@@ -156,6 +182,7 @@ function setupPhotoUpload() {
   area.addEventListener("drop", (e) => {
     e.preventDefault();
     area.style.borderColor = "";
+    if (area.classList.contains("has-photo")) return;
     const file = e.dataTransfer.files[0];
     if (file) {
       input.files = e.dataTransfer.files;
@@ -166,14 +193,7 @@ function setupPhotoUpload() {
 
 // --- Submit ---
 async function submitForm() {
-  if (!validateStep(4)) return;
-
-  const morningRoutine = document.getElementById("morningRoutine").value;
-  const eveningRoutine = document.getElementById("eveningRoutine").value;
-  const routine = [
-    morningRoutine ? `Morning: ${morningRoutine}` : "",
-    eveningRoutine ? `Evening: ${eveningRoutine}` : "",
-  ].filter(Boolean).join(" | ");
+  // Photo is optional — no validation needed for step 3
 
   const payload = {
     age: parseInt(document.getElementById("age").value),
@@ -181,8 +201,7 @@ async function submitForm() {
     skinType,
     concerns,
     sensitivities: document.getElementById("sensitivities").value,
-    routine,
-    photo: photoDataUrl,
+    photo: photoDataUrl || null,
   };
 
   // Show loading
@@ -200,7 +219,7 @@ async function submitForm() {
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Something went wrong");
+    if (!res.ok) throw new Error(data.error || "משהו השתבש, נסי שוב.");
 
     showResults(data);
   } catch (err) {
@@ -216,10 +235,10 @@ function showResults(data) {
 
   // Skin analysis card
   const analysis = data.skin_analysis || {};
-  const concerns = (analysis.detected_concerns || []).map((c) => `<span class="analysis-tag">${c}</span>`).join("");
+  const concernTags = (analysis.detected_concerns || []).map((c) => `<span class="analysis-tag">${c}</span>`).join("");
   document.getElementById("analysisCard").innerHTML = `
     <h3>🔍 ניתוח העור שלך</h3>
-    <div class="analysis-row">${concerns}</div>
+    <div class="analysis-row">${concernTags}</div>
     <p class="analysis-text"><strong>סוג עור:</strong> ${analysis.skin_type_assessment || "—"}</p>
     <p class="analysis-text" style="margin-top:8px;">${analysis.overall_condition || ""}</p>
   `;
@@ -267,7 +286,6 @@ function showError(show, msg = "") {
     document.getElementById("loading").style.display = "none";
     document.getElementById("errorMsg").textContent = msg || "משהו השתבש. נסה/י שוב.";
     box.style.display = "block";
-    // Re-show form elements
     document.getElementById("skincareForm").style.display = "block";
     document.getElementById("progressBar").style.display = "block";
     document.getElementById("stepLabel").style.display = "block";
@@ -292,13 +310,20 @@ function restart() {
   photoDataUrl = "";
   document.getElementById("age").value = "";
   document.getElementById("sensitivities").value = "";
-  document.getElementById("morningRoutine").value = "";
-  document.getElementById("eveningRoutine").value = "";
+  document.getElementById("skinTypeOther").style.display = "none";
+  document.getElementById("skinTypeOther").value = "";
+
+  // Reset upload area
+  const area = document.getElementById("uploadArea");
+  const icon = area.querySelector(".upload-icon");
+  icon.textContent = "📷";
+  icon.style.display = "";
+  area.querySelectorAll("p").forEach((p) => (p.style.display = ""));
   document.getElementById("photoPreview").style.display = "none";
+  document.getElementById("photoPreview").src = "";
+  area.classList.remove("has-photo");
+
   document.querySelectorAll(".pill").forEach((p) => p.classList.remove("selected"));
-  document.getElementById("uploadArea").classList.remove("has-photo");
-  document.getElementById("uploadArea").querySelector(".upload-icon").style.display = "";
-  document.getElementById("uploadArea").querySelectorAll("p").forEach((p) => (p.style.display = ""));
 
   goToStep(1);
 }

@@ -14,8 +14,8 @@ app.use(express.static("public"));
 app.post("/api/recommend", async (req, res) => {
   const { age, gender, skinType, concerns, sensitivities, routine, photo } = req.body;
 
-  if (!age || !skinType || !concerns?.length || !photo) {
-    return res.status(400).json({ error: "age, skinType, concerns, and photo are required" });
+  if (!age || !skinType || !concerns?.length) {
+    return res.status(400).json({ error: "גיל, סוג עור ומאפיינים הם שדות חובה." });
   }
 
   // Parse base64 photo
