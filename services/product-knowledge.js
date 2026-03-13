@@ -106,56 +106,67 @@ COBRA Cream / קרם קוברה
   Note: Recommend instead of אובליפיחה when user has acne
 
 --- KITS — WHAT EACH CONTAINS (critical for counting) ---
+⚠️ ANTI-DUPLICATION: If you recommend a kit, NEVER also recommend its individual components separately.
 
 גזע + מולטי
   Contains: קרם פנים תאי גזע (CREAM, rich) + סרום מולטי ויטמין (SERUM)
   Counts as: 1 cream + 1 serum
+  ⛔ Do NOT add: קרם פנים תאי גזע, סרום מולטי ויטמין
 
 גזע + קוברה
   Contains: קרם פנים תאי גזע (CREAM, rich) + סרום קוברה (SERUM)
   Counts as: 1 cream + 1 serum
+  ⛔ Do NOT add: קרם פנים תאי גזע, סרום קוברה / COBRA
 
 COBRA Kit
   Contains: סרום קוברה 50מ"ל (SERUM) + קרם קוברה 50מ"ל (CREAM)
   Counts as: 1 serum + 1 cream
+  ⛔ Do NOT add: COBRA (serum), COBRA Cream
 
 Beauty Kit
   Contains: קרם פנים חומצה היאלורונית (CREAM, light) + סרום חומצה היאלורונית (SERUM)
   Counts as: 1 cream + 1 serum
+  ⛔ Do NOT add: קרם פנים חומצה היאלורונית, סרום חומצה היאלורונית
 
 ערכת לילה
   Contains: סרום לילה סורבה יוזו (SERUM, evening) + קרם הבהרה והזנה ללילה (CREAM, evening)
   Counts as: 1 serum + 1 cream
   Note: Full evening routine in one kit.
+  ⛔ Do NOT add: סרום לילה יוזו, קרם הבהרה והזנה ללילה
 
 מארז יום ולילה
   Contains: קרם יום חומצה היאלורונית (CREAM, day) + קרם הבהרה והזנה ללילה (CREAM, evening)
   Counts as: 2 creams
   Note: Recommend for atopic dermatitis or seborrhea.
+  ⛔ Do NOT add: קרם פנים חומצה היאלורונית, קרם הבהרה והזנה ללילה
 
 קיט עיניים להפחתת כהות
   Contains: קרם עיניים קוויאר (EYE CREAM) + שמן עיניים (EYE OIL)
   Counts as: 2 eye products (does NOT count against serum or cream limits)
+  ⛔ Do NOT add: קרם עיניים פעיל קוויאר, שמן עיניים
 
 Day, Night, Cobra
   Contains: סרום קוברה (SERUM) + קרם יום חומצה היאלורונית (CREAM, day) + קרם הבהרה ללילה (CREAM, evening)
-  Counts as: 1 serum + 2 creams (3 individual items total)
-  Note: Use when recommending this kit — it already fulfills both the serum and cream quotas.
+  Counts as: 1 serum + 2 creams (3 individual items total — fulfills both serum and cream quotas)
+  ⛔ Do NOT add: COBRA serum, קרם פנים חומצה היאלורונית, קרם הבהרה והזנה ללילה
 
 הערכה המושלמת
   Contains: סבון טבעי + קרם יום לעור מעורב עד שמן + נוזל לטיפול בפצעונים + מסיכת דיטוקס פחם שחור
   Counts as: soap + 1 cream + acne treatment + mask
   For: oily skin with acne, ages 12–28
+  ⛔ Do NOT add: סבון טבעי, קרם יום לעור מעורב עד שמן, נוזל לטיפול בפצעונים
 
 4 Steps Kit
   Contains: סבון טבעי + קרם יום מעורב עד שמן + נוזל לטיפול בפצעונים + מסיכת דיטוקס פחם שחור
   Counts as: soap + 1 cream + acne treatment + mask
-  Similar to הערכה המושלמת. For: oily/acne skin.
+  For: oily/acne skin
+  ⛔ Do NOT add: סבון טבעי, קרם יום לעור מעורב עד שמן, נוזל לטיפול בפצעונים
 
 3 Steps Kit
   Contains: סבון טבעי + קרם יום מעורב עד שמן + נוזל לטיפול בפצעונים
   Counts as: soap + 1 cream + acne treatment
   For: oily/acne skin (3-step routine)
+  ⛔ Do NOT add: סבון טבעי, קרם יום לעור מעורב עד שמן, נוזל לטיפול בפצעונים
 
 ערכת התנסות בהתאמה אישית
   Contains: 4–5 mini products (personalized, 4–10ml each)

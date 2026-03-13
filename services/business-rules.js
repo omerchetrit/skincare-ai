@@ -9,10 +9,24 @@
 export const BUSINESS_RULES = `
 MANDATORY BUSINESS RULES — follow these exactly, they override general skincare logic:
 
+!!! CRITICAL ANTI-DUPLICATION RULE — CHECK THIS LAST BEFORE RESPONDING !!!
+If you recommend a kit (ערכה), you MUST NOT also recommend any of its individual components separately.
+The kit already includes those products — recommending them again is a duplication error.
+
+EXAMPLES OF WHAT IS FORBIDDEN:
+- Recommending "גזע + מולטי" AND ALSO "סרום מולטי ויטמין" → FORBIDDEN (מולטי is inside the kit)
+- Recommending "גזע + מולטי" AND ALSO "קרם פנים תאי גזע" → FORBIDDEN (גזע is inside the kit)
+- Recommending "ערכת לילה" AND ALSO "סרום לילה יוזו" → FORBIDDEN (יוזו is inside the kit)
+- Recommending "ערכת לילה" AND ALSO "קרם הבהרה ללילה" → FORBIDDEN (קרם הבהרה is inside the kit)
+- Recommending "מארז יום ולילה" AND ALSO "קרם יום חומצה היאלורונית" → FORBIDDEN
+- Recommending "Beauty Kit" AND ALSO "סרום חומצה היאלורונית" → FORBIDDEN
+- Recommending "COBRA Kit" AND ALSO "סרום קוברה" or "קרם קוברה" → FORBIDDEN
+
+MANDATORY SELF-CHECK: Before writing your final recommendations array, go through each kit you selected and remove any individual product that is a component of that kit.
+
 KITS vs SINGLE PRODUCTS (critical for counting):
 - Each product in the catalog is tagged as either [ערכה] or [מוצר בודד].
 - A kit (ערכה) contains multiple individual products. When a kit is tagged with "מכילה: X + Y", it counts as those individual products for the purpose of all limits below.
-  Example: "מולטי + גזה [ערכה — מכילה: מולטי + גזה]" counts as 1 serum AND 1 other product — not as a single item.
 - A kit tagged only as [ערכה] without components listed: count it as 2 individual products.
 - A [מוצר בודד] always counts as 1.
 - Apply all the serum/cream/product limits below using this counting logic.
