@@ -16,26 +16,29 @@ so you can count correctly against the serum/cream limits.
 
 --- INDIVIDUAL SERUMS ---
 
+COBRA / סרום קוברה (also sold as 30ml or 50ml)
+  Type: SERUM (morning or evening)
+  For: firming, lifting, anti-wrinkle, general daily serum for everyone
+  Key ingredients: cobra peptide (botox-like), antioxidants
+  Note: This is the DEFAULT serum. Suits everyone. Morning or evening.
+
 סרום לילה - סורבה יוזו (קיים בשני גדלים: 30מ"ל ו-50מ"ל)
   Type: SERUM (evening only)
   For: pigmentation, acne scars, post-acne redness, uneven texture
   Key ingredients: azelaic acid, niacinamide (B3), vitamin C/A/E, yuzu essential oil
-  Note: This is the DEFAULT serum. Suits everyone. Evening only.
+  Note: Recommended when pigmentation is a concern. Evening only.
 
 סרום מולטי ויטמין
   Type: SERUM (morning or evening)
   For: dry skin, fine lines, mature skin (45+)
   Key ingredients: vitamin C, E, omega 3/6/9
+  Note: Recommended when dryness or mature skin (45+) is the primary concern.
 
 סרום חומצה היאלורונית / סרום חומצה היאלורונית-ורד (same product, two names)
   Type: SERUM (morning or evening)
-  For: anti-aging, fine lines, collagen production
+  For: anti-aging, fine lines, collagen production, light-texture preference
   Key ingredients: hyaluronic acid (nano), peptides
-
-COBRA / סרום קוברה (also sold as 30ml or 50ml)
-  Type: SERUM (morning or evening)
-  For: firming, lifting, anti-wrinkle
-  Key ingredients: cobra peptide (botox-like), antioxidants
+  Note: Good choice when user prefers a very light-texture serum.
 
 סרום הבהרה לטיפול בפיגמנטציה ובכהויות
   Type: SERUM (evening only — pigmentation treatment)
