@@ -4,12 +4,17 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function analyzeAndRecommend({ age, gender, skinType, concerns, sensitivities, texturePreference, photoBase64, photoMimeType, products }) {
   const productCatalog = products
-    .map((p, i) =>
-      `[${i + 1}] ${p.name}
+    .map((p, i) => {
+      const kitLabel = p.isKit
+        ? p.kitComponents.length > 0
+          ? ` [ערכה — מכילה: ${p.kitComponents.join(" + ")}]`
+          : ` [ערכה]`
+        : " [מוצר בודד]";
+      return `[${i + 1}] ${p.name}${kitLabel}
   Description: ${p.description.slice(0, 300)}
   Price: ${p.price}
-  URL: ${p.url}`
-    )
+  URL: ${p.url}`;
+    })
     .join("\n\n");
 
   const userProfile = `
@@ -22,6 +27,14 @@ Texture preference: ${texturePreference === "light" ? "light/fast-absorbing" : t
 
   const businessRules = `
 MANDATORY BUSINESS RULES — follow these exactly, they override general skincare logic:
+
+KITS vs SINGLE PRODUCTS (critical for counting):
+- Each product in the catalog is tagged as either [ערכה] or [מוצר בודד].
+- A kit (ערכה) contains multiple individual products. When a kit is tagged with "מכילה: X + Y", it counts as those individual products for the purpose of all limits below.
+  Example: "מולטי + גזה [ערכה — מכילה: מולטי + גזה]" counts as 1 serum AND 1 other product — not as a single item.
+- A kit tagged only as [ערכה] without components listed: count it as 2 individual products.
+- A [מוצר בודד] always counts as 1.
+- Apply all the serum/cream/product limits below using this counting logic.
 
 SERUMS:
 - Recommend no more than 2 serums total (one morning, one evening).
