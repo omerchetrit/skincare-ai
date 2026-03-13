@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { BUSINESS_RULES } from "./business-rules.js";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -25,54 +26,13 @@ Main concerns: ${concerns.join(", ")}
 Sensitivities/allergies: ${sensitivities || "none mentioned"}
 Texture preference: ${texturePreference === "light" ? "light/fast-absorbing" : texturePreference === "rich" ? "rich/nourishing" : "no preference stated"}`.trim();
 
-  const businessRules = `
-MANDATORY BUSINESS RULES — follow these exactly, they override general skincare logic:
-
-KITS vs SINGLE PRODUCTS (critical for counting):
-- Each product in the catalog is tagged as either [ערכה] or [מוצר בודד].
-- A kit (ערכה) contains multiple individual products. When a kit is tagged with "מכילה: X + Y", it counts as those individual products for the purpose of all limits below.
-  Example: "מולטי + גזה [ערכה — מכילה: מולטי + גזה]" counts as 1 serum AND 1 other product — not as a single item.
-- A kit tagged only as [ערכה] without components listed: count it as 2 individual products.
-- A [מוצר בודד] always counts as 1.
-- Apply all the serum/cream/product limits below using this counting logic.
-
-SERUMS:
-- Recommend no more than 2 serums total (one morning, one evening).
-- Yuzu serum (סרום יוזו) is evening-only. It is the default/go-to serum — always suits everyone. Good for pigmentation and wrinkle care.
-- For women under age 25: do NOT recommend a morning serum. You may recommend Yuzu serum for the evening.
-- Multi-vitamin serum (סרום מולטי ויטמין): suitable for dryness, fine lines, or mature skin (45+). Can be used morning or evening.
-- All other serums can be morning or evening.
-
-CREAMS:
-- Recommend no more than 2 creams total.
-- Brightening cream (קרם הבהרה) is evening-only. All other creams are suitable morning and/or evening.
-- Hyaluronic acid cream (קרם חומצה היאלורונית) = light texture. Recommend from age 30+ or if fine lines are present.
-- Stem cell cream (קרם תאי גזע) = rich texture. Recommend for dry skin OR age 40+.
-- Liloosh active cream = very light texture, suitable for young women (teens/early twenties).
-- Day cream for combination-to-oily skin (קרם יום לעור מעורב עד שמן): ages 12–28 with acne.
-- Day cream for young skin (קרם יום לעור צעיר): ages 12–28 without acne or with minimal breakouts.
-- Texture preference stated by user: ${texturePreference === "light" ? "prefer LIGHT creams" : texturePreference === "rich" ? "prefer RICH creams" : "no preference — use best judgment"}.
-
-SOAPS:
-- Always include the face soap "סבון פנים אובליפיחה גדול" in every recommendation set.
-- Exception: if the user has acne, recommend the natural soap (סבון טבעי) instead.
-
-EYE PRODUCTS:
-- Recommend eye products only when the user has eye-related concerns (dark circles, puffiness, wrinkles around eyes).
-- The more severe the eye concern, the more eye products you may include.
-
-PIGMENTATION:
-- Pigmentation treatment products are evening-only.
-
-AGE-BASED RULES:
-- Age 30+: always include an evening routine recommendation.
-- Age 40+: prefer stem cell cream (rich texture).
-- Age 45+: consider multi-vitamin serum.
-
-SPECIAL CONDITIONS:
-- Atopic dermatitis (דרמטיטיס אטופי) or seborrhea (סבוריאה): recommend the day-and-night set (מארז יום ולילה).
-
-TOTAL PRODUCTS: Recommend between 3 and 6 products. Only include products from the catalog that genuinely match.`;
+  // Business rules come from services/business-rules.js (single source of truth).
+  // We append the dynamic texture preference here.
+  const textureLine = `- Texture preference stated by user: ${texturePreference === "light" ? "prefer LIGHT creams" : texturePreference === "rich" ? "prefer RICH creams" : "no preference — use best judgment"}.`;
+  const businessRules = BUSINESS_RULES.replace(
+    "- Texture preference stated by user: follow it when choosing between cream options.",
+    textureLine
+  );
 
   // Build message content — image is optional
   const messageContent = [];
