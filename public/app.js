@@ -1,12 +1,13 @@
 // State
 let currentStep = 1;
-const totalSteps = 4;
+const totalSteps = 5;
 let gender = "";
 let skinType = "";
 let concerns = [];
 let texturePreference = "";
 let pregnancyStatus = "";
 let photoDataUrl = "";
+let verifiedToken = "";
 
 // --- Navigation ---
 function goToStep(n) {
@@ -193,10 +194,85 @@ function setupPhotoUpload() {
   });
 }
 
+// --- OTP / Phone Verification ---
+
+function showPhoneSection() {
+  document.getElementById("phoneSection").style.display = "block";
+  document.getElementById("otpSection").style.display = "none";
+  document.getElementById("phoneError").textContent = "";
+  document.getElementById("otpError").textContent = "";
+}
+
+async function sendOTPCode() {
+  const phone = document.getElementById("phoneInput").value.trim();
+  document.getElementById("phoneError").textContent = "";
+
+  if (!phone || phone.replace(/\D/g, "").length < 9) {
+    document.getElementById("phoneError").textContent = "נא להזין מספר טלפון תקין.";
+    return;
+  }
+
+  const btn = document.getElementById("sendOtpBtn");
+  btn.disabled = true;
+  btn.textContent = "שולחת...";
+
+  try {
+    const res = await fetch("/api/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    // Show OTP input
+    document.getElementById("otpSentNote").textContent = `קוד נשלח למספר ${phone}`;
+    document.getElementById("phoneSection").style.display = "none";
+    document.getElementById("otpSection").style.display = "block";
+    document.getElementById("otpInput").focus();
+  } catch (err) {
+    document.getElementById("phoneError").textContent = err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "שלחי קוד אימות ←";
+  }
+}
+
+async function verifyOTPCode() {
+  const phone = document.getElementById("phoneInput").value.trim();
+  const code = document.getElementById("otpInput").value.trim();
+  const email = document.getElementById("emailInput").value.trim();
+  document.getElementById("otpError").textContent = "";
+
+  if (!code || code.length !== 6) {
+    document.getElementById("otpError").textContent = "נא להזין קוד בן 6 ספרות.";
+    return;
+  }
+
+  const btn = document.getElementById("verifyOtpBtn");
+  btn.disabled = true;
+  btn.textContent = "מאמתת...";
+
+  try {
+    const res = await fetch("/api/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, code, email }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    verifiedToken = data.token;
+    submitForm();
+  } catch (err) {
+    document.getElementById("otpError").textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = "✨ קבלי המלצות אישיות";
+  }
+}
+
 // --- Submit ---
 async function submitForm() {
-  // Photo is optional — no validation needed for step 3
-
   const payload = {
     age: parseInt(document.getElementById("age").value),
     gender,
@@ -206,6 +282,7 @@ async function submitForm() {
     texturePreference,
     pregnancyStatus,
     photo: photoDataUrl || null,
+    verifiedToken,
   };
 
   // Show loading
@@ -314,8 +391,13 @@ function restart() {
   texturePreference = "";
   pregnancyStatus = "";
   photoDataUrl = "";
+  verifiedToken = "";
   document.getElementById("age").value = "";
   document.getElementById("sensitivities").value = "";
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("emailInput").value = "";
+  document.getElementById("otpInput").value = "";
+  showPhoneSection();
   document.getElementById("skinTypeOther").style.display = "none";
   document.getElementById("skinTypeOther").value = "";
 

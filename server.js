@@ -3,16 +3,47 @@ import express from "express";
 import cors from "cors";
 import { getProducts } from "./services/wix.js";
 import { analyzeAndRecommend } from "./services/claude.js";
+import { sendOTP, verifyOTP, validateToken } from "./services/otp.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "35mb" })); // photos up to 25MB → ~34MB base64
 app.use(express.static("public"));
 
+// POST /api/send-otp
+app.post("/api/send-otp", async (req, res) => {
+  const { phone } = req.body;
+  if (!phone) return res.status(400).json({ error: "מספר טלפון נדרש." });
+  try {
+    await sendOTP(phone);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// POST /api/verify-otp
+app.post("/api/verify-otp", (req, res) => {
+  const { phone, code, email } = req.body;
+  if (!phone || !code) return res.status(400).json({ error: "טלפון וקוד נדרשים." });
+  try {
+    const { token } = verifyOTP(phone, code, email);
+    res.json({ token });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 // POST /api/recommend
 // Body: { age, gender, skinType, concerns[], sensitivities, routine, photo: "data:image/jpeg;base64,..." }
 app.post("/api/recommend", async (req, res) => {
-  const { age, gender, skinType, concerns, sensitivities, texturePreference, pregnancyStatus, photo } = req.body;
+  const { age, gender, skinType, concerns, sensitivities, texturePreference, pregnancyStatus, photo, verifiedToken } = req.body;
+
+  // ── Auth check ──
+  const session = validateToken(verifiedToken);
+  if (!session) {
+    return res.status(401).json({ error: "נדרש אימות טלפון. רעננו את הדף ונסי שוב." });
+  }
 
   if (!age || !skinType || !concerns?.length) {
     return res.status(400).json({ error: "גיל, סוג עור ומאפיינים הם שדות חובה." });

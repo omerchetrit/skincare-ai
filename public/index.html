@@ -137,10 +137,48 @@
         <div class="privacy-note">🔒 התמונה נשלחת בצורה מאובטחת לניתוח בלבד ואינה נשמרת בשרתינו.</div>
 
         <div class="nav-row">
-          <button type="button" class="btn-submit" id="submitBtn" onclick="submitForm()">
+          <button type="button" class="btn-next" onclick="nextStep(4)">המשך ←</button>
+          <button type="button" class="btn-back" onclick="prevStep(4)">→ חזור</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Phone Verification -->
+      <div class="step" id="step5">
+        <h2>כמעט סיימנו ✨</h2>
+        <p class="hint">אמתי את מספר הטלפון שלך כדי לקבל את ההמלצות</p>
+
+        <!-- Phone + Email form -->
+        <div id="phoneSection">
+          <div class="field">
+            <label for="phoneInput">מספר טלפון *</label>
+            <input type="tel" id="phoneInput" placeholder="050-1234567" inputmode="tel" />
+            <span class="field-error" id="phoneError"></span>
+          </div>
+          <div class="field">
+            <label for="emailInput">כתובת מייל (לא חובה)</label>
+            <input type="email" id="emailInput" placeholder="name@example.com" inputmode="email" />
+          </div>
+          <button type="button" class="btn-next" id="sendOtpBtn" onclick="sendOTPCode()">שלחי קוד אימות ←</button>
+        </div>
+
+        <!-- OTP verification -->
+        <div id="otpSection" style="display:none;">
+          <p class="hint" id="otpSentNote"></p>
+          <div class="field">
+            <label for="otpInput">קוד אימות (6 ספרות)</label>
+            <input type="text" id="otpInput" placeholder="123456" maxlength="6" inputmode="numeric" autocomplete="one-time-code" />
+            <span class="field-error" id="otpError"></span>
+          </div>
+          <button type="button" class="btn-submit" id="verifyOtpBtn" onclick="verifyOTPCode()">
             ✨ קבלי המלצות אישיות
           </button>
-          <button type="button" class="btn-back" onclick="prevStep(4)">→ חזור</button>
+          <button type="button" class="btn-back" id="resendBtn" onclick="showPhoneSection()" style="margin-top:10px; width:100%;">
+            → שלחי קוד מחדש / שני מספר
+          </button>
+        </div>
+
+        <div class="nav-row" style="margin-top:16px;">
+          <button type="button" class="btn-back" onclick="prevStep(5)">→ חזור</button>
         </div>
       </div>
 
