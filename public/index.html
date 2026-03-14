@@ -12,7 +12,7 @@
     <!-- Header -->
     <div class="header">
       <h1>יועצת הטיפוח האישית שלך ✨</h1>
-      <p>ענה/י על כמה שאלות והעלה/י תמונה — נמצא עבורך את המוצרים המושלמים.</p>
+      <p>ענני על כמה שאלות והעלי תמונה — נמצא עבורך את המוצרים המושלמים.</p>
     </div>
 
     <!-- Progress bar -->
@@ -39,8 +39,6 @@
           <div class="pills" id="genderPills">
             <button type="button" class="pill" data-value="female">אישה</button>
             <button type="button" class="pill" data-value="male">גבר</button>
-            <button type="button" class="pill" data-value="non-binary">נון-בינארי</button>
-            <button type="button" class="pill" data-value="prefer not to say">מעדיפ/ה לא לציין</button>
           </div>
         </div>
 
@@ -54,7 +52,7 @@
             <button type="button" class="pill" data-value="sensitive">רגיש</button>
             <button type="button" class="pill" data-value="other">אחר</button>
           </div>
-          <input type="text" id="skinTypeOther" placeholder="תאר/י את סוג העור שלך..." style="display:none; margin-top:10px;" />
+          <input type="text" id="skinTypeOther" placeholder="תארי את סוג העור שלך..." style="display:none; margin-top:10px;" />
           <span class="field-error" id="skinTypeError"></span>
         </div>
 
@@ -105,8 +103,8 @@
 
       <!-- Step 3: Texture Preference -->
       <div class="step" id="step3">
-        <h2>איזה מרקם קרם את/ה אוהב/ת?</h2>
-        <p class="hint">זה עוזר לנו להמליץ על מוצרים שתרצי/ה להשתמש בהם</p>
+        <h2>איזה מרקם קרם את אוהבת?</h2>
+        <p class="hint">זה עוזר לנו להמליץ על מוצרים שתרצי להשתמש בהם</p>
 
         <div class="pills" id="texturePills">
           <button type="button" class="pill pill-large" data-value="light">
@@ -125,12 +123,12 @@
 
       <!-- Step 4: Photo Upload -->
       <div class="step" id="step4">
-        <h2>העלה/י תמונה של הפנים שלך</h2>
+        <h2>העלי תמונה של הפנים שלך</h2>
         <p class="hint">אופציונלי — אבל ממליצים! אור טבעי, ללא איפור — כך נוכל לראות את העור שלך בצורה הטובה ביותר.</p>
 
         <div class="upload-area" id="uploadArea" onclick="if(!this.classList.contains('has-photo')) document.getElementById('photoInput').click()">
           <div class="upload-icon">📷</div>
-          <p>לחץ/י להעלאה או גרור/י לכאן</p>
+          <p>לחצי להעלאה או גרורי לכאן</p>
           <p class="upload-sub">JPEG, PNG או WebP — עד 25MB</p>
           <img id="photoPreview" src="" alt="" style="display:none;" />
         </div>
@@ -140,7 +138,7 @@
 
         <div class="nav-row">
           <button type="button" class="btn-submit" id="submitBtn" onclick="submitForm()">
-            ✨ קבל/י המלצות אישיות
+            ✨ קבלי המלצות אישיות
           </button>
           <button type="button" class="btn-back" onclick="prevStep(4)">→ חזור</button>
         </div>
