@@ -380,6 +380,99 @@ body {
   min-height: 1em;
 }
 
+/* ── Mobile Responsive ──────────────────────────────── */
+@media (max-width: 480px) {
+  .app {
+    padding: 20px 14px 48px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: 1.4rem;
+  }
+  .header p {
+    font-size: 0.88rem;
+  }
+
+  .step h2 {
+    font-size: 1.2rem;
+  }
+  .hint {
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+  }
+
+  /* Smaller pills on mobile */
+  .pill {
+    padding: 7px 12px;
+    font-size: 0.82rem;
+  }
+  .pill.pill-large {
+    min-width: 120px;
+    padding: 14px 12px;
+    font-size: 1rem;
+  }
+
+  /* Upload area */
+  .upload-area {
+    padding: 28px 16px;
+    min-height: 160px;
+  }
+
+  /* Product card — stack vertically on very small screens */
+  .product-card {
+    flex-direction: row; /* keep row but shrink image */
+  }
+  .product-image,
+  .product-image-placeholder {
+    width: 70px;
+    min-width: 70px;
+  }
+  .product-body {
+    padding: 12px;
+  }
+  .product-name {
+    font-size: 0.92rem;
+  }
+  .product-reason,
+  .product-how {
+    font-size: 0.8rem;
+  }
+  .product-badge {
+    font-size: 0.6rem;
+    min-width: 22px;
+    padding: 8px 4px;
+  }
+
+  /* Analysis card */
+  .analysis-card,
+  .routine-card {
+    padding: 16px;
+  }
+
+  /* Results header */
+  .results-header h2 {
+    font-size: 1.25rem;
+  }
+
+  /* Buttons */
+  .btn-next, .btn-submit {
+    padding: 13px;
+    font-size: 0.95rem;
+  }
+  .btn-back {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+
+  /* Loading */
+  .loading {
+    padding: 40px 16px;
+  }
+}
+
 /* Error */
 .error-box {
   background: #fff5f5;

@@ -354,3 +354,16 @@ setupSinglePills("skinTypePills", (v) => {
 });
 setupMultiPills("concernsPills", concerns);
 setupPhotoUpload();
+
+// --- Wix iframe auto-resize ---
+// Reports the page height to the parent Wix page so the iframe resizes dynamically
+function reportHeight() {
+  const height = document.documentElement.scrollHeight;
+  window.parent.postMessage({ type: "skincareAiHeight", height }, "*");
+}
+reportHeight();
+new MutationObserver(reportHeight).observe(document.body, {
+  subtree: true,
+  childList: true,
+  attributes: true,
+});
