@@ -381,7 +381,7 @@ body {
 }
 
 /* ── Mobile Responsive ──────────────────────────────── */
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .app {
     padding: 20px 14px 48px;
   }
@@ -421,29 +421,70 @@ body {
     min-height: 160px;
   }
 
-  /* Product card — stack vertically on very small screens */
+  /* ── Products: horizontal swipe carousel ── */
+  .products-grid {
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 4px 14px 12px;
+    margin: 0 -14px 8px;
+    gap: 12px;
+  }
+  .products-grid::-webkit-scrollbar { display: none; }
+
+  /* Each card: full-height column, snaps into place */
   .product-card {
-    flex-direction: row; /* keep row but shrink image */
+    flex-direction: column;
+    min-width: min(82vw, 300px);
+    max-width: min(82vw, 300px);
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    position: relative;
   }
-  .product-image,
+
+  /* Badge becomes a pill overlay on the image */
+  .product-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    writing-mode: horizontal-tb;
+    transform: none;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    min-width: unset;
+    z-index: 2;
+    letter-spacing: 0.5px;
+  }
+
+  /* Image fills full card width */
+  .product-image {
+    width: 100%;
+    height: 190px;
+    min-width: unset;
+    object-fit: cover;
+  }
   .product-image-placeholder {
-    width: 70px;
-    min-width: 70px;
+    width: 100%;
+    height: 190px;
+    min-width: unset;
+    font-size: 3rem;
   }
+
   .product-body {
-    padding: 12px;
+    padding: 14px;
   }
   .product-name {
-    font-size: 0.92rem;
+    font-size: 0.95rem;
   }
-  .product-reason,
+  .product-reason {
+    font-size: 0.84rem;
+  }
   .product-how {
     font-size: 0.8rem;
-  }
-  .product-badge {
-    font-size: 0.6rem;
-    min-width: 22px;
-    padding: 8px 4px;
   }
 
   /* Analysis card */
@@ -471,6 +512,18 @@ body {
   .loading {
     padding: 40px 16px;
   }
+}
+
+/* ── Carousel swipe hint (mobile only) ── */
+.carousel-hint {
+  display: none;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #b0a09a;
+  margin-bottom: 20px;
+}
+@media (max-width: 640px) {
+  .carousel-hint { display: block; }
 }
 
 /* Error */

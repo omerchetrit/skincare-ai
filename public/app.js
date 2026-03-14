@@ -334,7 +334,8 @@ function showResults(data) {
 
   // Products
   const grid = document.getElementById("productsGrid");
-  grid.innerHTML = (data.recommendations || []).map((p) => {
+  const recommendations = data.recommendations || [];
+  grid.innerHTML = recommendations.map((p) => {
     const badgeClass = p.priority === "must-have" ? "badge-must" : p.priority === "recommended" ? "badge-recommended" : "badge-bonus";
     const badgeLabel = p.priority === "must-have" ? "חובה" : p.priority === "recommended" ? "מומלץ" : "בונוס";
     const imageHtml = p.product_image
@@ -355,6 +356,14 @@ function showResults(data) {
       </div>
     `;
   }).join("");
+
+  // Swipe hint for carousel
+  const hint = document.getElementById("carouselHint");
+  if (hint) {
+    hint.textContent = recommendations.length > 1
+      ? `← גללי לצד שמאל לעוד מוצרים  •  ${recommendations.length} מוצרים בסך הכל`
+      : "";
+  }
 
   // Routine
   if (data.routine_suggestion) {
