@@ -18,6 +18,7 @@ app.post("/api/send-otp", async (req, res) => {
     await sendOTP(email);
     res.json({ success: true });
   } catch (err) {
+    console.error("[OTP] send-otp failed:", err.message, err.code || "");
     res.status(400).json({ error: err.message });
   }
 });
@@ -147,4 +148,8 @@ app.get("/api/products", async (_req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Skincare AI running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Skincare AI running on http://localhost:${PORT}`);
+  console.log(`[ENV] GMAIL_USER=${process.env.GMAIL_USER ? process.env.GMAIL_USER : "⚠️  NOT SET"}`);
+  console.log(`[ENV] GMAIL_APP_PASSWORD=${process.env.GMAIL_APP_PASSWORD ? "✓ set" : "⚠️  NOT SET"}`);
+});
