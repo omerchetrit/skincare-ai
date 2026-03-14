@@ -82,10 +82,15 @@ app.post("/api/recommend", async (req, res) => {
       products,
     });
 
-    // Attach product images from catalog (Claude doesn't have them)
+    // Attach product images, IDs and URLs from catalog (Claude doesn't have them)
     result.recommendations = result.recommendations.map((rec) => {
       const product = products.find((p) => p.name === rec.product_name);
-      return { ...rec, product_image: product?.image || "" };
+      return {
+        ...rec,
+        product_image: product?.image || "",
+        product_id: product?.id || "",
+        product_url: product?.url || rec.product_url || "",
+      };
     });
 
     // ── LLM Selection Reasoning Log ──────────────────────────────

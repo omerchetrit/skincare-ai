@@ -342,6 +342,10 @@ function showResults(data) {
       ? `<img class="product-image" src="${p.product_image}" alt="${p.product_name}" />`
       : `<div class="product-image-placeholder">🌿</div>`;
 
+    const cartBtn = p.product_id
+      ? `<button class="btn-add-cart" onclick="addToCart('${p.product_id}', this)">🛒 הוסיפי לסל</button>`
+      : "";
+
     return `
       <div class="product-card">
         <div class="product-badge ${badgeClass}">${badgeLabel}</div>
@@ -351,7 +355,10 @@ function showResults(data) {
           <div class="product-price">${p.product_price}</div>
           <div class="product-reason">${p.reason}</div>
           <div class="product-how">💡 ${p.how_to_use}</div>
-          ${p.product_url ? `<a class="product-link" href="${p.product_url}" target="_blank">← לעמוד המוצר</a>` : ""}
+          <div class="product-actions">
+            ${p.product_url ? `<a class="product-link" href="${p.product_url}" target="_blank">← פרטים</a>` : ""}
+            ${cartBtn}
+          </div>
         </div>
       </div>
     `;
@@ -363,6 +370,18 @@ function showResults(data) {
     hint.textContent = recommendations.length > 1
       ? `← גללי לצד שמאל לעוד מוצרים  •  ${recommendations.length} מוצרים בסך הכל`
       : "";
+  }
+
+  // "Add all to cart" button
+  const allCartBtn = document.getElementById("addAllToCartBtn");
+  if (allCartBtn) {
+    const ids = recommendations.map((p) => p.product_id).filter(Boolean);
+    if (ids.length > 0) {
+      allCartBtn.style.display = "block";
+      allCartBtn.onclick = () => addAllToCart(ids);
+    } else {
+      allCartBtn.style.display = "none";
+    }
   }
 
   // Routine
@@ -391,6 +410,31 @@ function showError(show, msg = "") {
   } else {
     box.style.display = "none";
   }
+}
+
+// --- Cart ---
+function addToCart(productId, btn) {
+  window.parent.postMessage({ type: "addToCart", productIds: [productId] }, "*");
+  if (btn) {
+    btn.textContent = "✓ נוסף לסל";
+    btn.disabled = true;
+    btn.classList.add("btn-add-cart--added");
+  }
+}
+
+function addAllToCart(productIds) {
+  window.parent.postMessage({ type: "addToCart", productIds }, "*");
+  const btn = document.getElementById("addAllToCartBtn");
+  if (btn) {
+    btn.textContent = "✓ כל המוצרים נוספו לסל";
+    btn.disabled = true;
+  }
+  // Also mark individual buttons
+  document.querySelectorAll(".btn-add-cart").forEach((b) => {
+    b.textContent = "✓ נוסף";
+    b.disabled = true;
+    b.classList.add("btn-add-cart--added");
+  });
 }
 
 // --- Restart ---
