@@ -70,6 +70,9 @@ AGE-BASED RULES:
 SPECIAL CONDITIONS:
 - אם יש אטופיק דרמטיטיס או סבוריאה — להמליץ על מארז יום ולילה.
 
+CREAM COMBINATIONS:
+- קרם תאי גזע וקרם חומצה היאלורונית — אין טעם להמליץ על שניהם יחד. אם המלצת על קרם תאי גזע, אין לכלול קרם חומצה היאלורונית באותה המלצה, ולהפך.
+
 TOTAL PRODUCTS: Recommend between 3 and 6 products. Only include products from the catalog that genuinely match.
 
 PREGNANCY & BREASTFEEDING SAFETY:
