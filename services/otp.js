@@ -1,22 +1,14 @@
 /**
  * OTP service — email verification before Claude API call
- * Uses Nodemailer with Gmail SMTP (free).
+ * Uses Resend HTTP API (no SMTP — works on Railway).
  *
  * Required env vars:
- *   GMAIL_USER        — the Gmail address you send from (e.g. hello@lilachi.com)
- *   GMAIL_APP_PASSWORD — Gmail App Password (not your regular password)
+ *   RESEND_API_KEY  — from resend.com (free tier: 3,000 emails/month)
+ *   RESEND_FROM     — sender address, e.g. "Lilachi <hello@lilachi.com>"
+ *                     or "Lilachi <onboarding@resend.dev>" for testing
  */
 
-import nodemailer from "nodemailer";
 import crypto from "crypto";
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
 
 // In-memory store: email → { otp, expires, attempts, sendCount, lastSent }
 const otpStore = new Map();
@@ -35,6 +27,47 @@ setInterval(() => {
 
 function generateOTP() {
   return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+async function sendEmail(to, otp) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM || "Lilachi <onboarding@resend.dev>";
+
+  if (!apiKey) throw new Error("RESEND_API_KEY is not set");
+
+  const html = `
+    <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px; background: #fdf9f7; border-radius: 16px; border: 1px solid #f0e6e0;">
+      <h2 style="color: #4a3728; margin-bottom: 8px;">קוד האימות שלך</h2>
+      <p style="color: #6a5a50; margin-bottom: 24px;">הזיני את הקוד הבא כדי להמשיך ולקבל את המלצות הטיפוח האישיות שלך:</p>
+      <div style="background: #fff; border: 2px solid #c9836a; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
+        <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #c9836a;">${otp}</span>
+      </div>
+      <p style="color: #9a8880; font-size: 13px;">הקוד תקף ל-5 דקות. אם לא ביקשת קוד, ניתן להתעלם ממייל זה.</p>
+      <hr style="border: none; border-top: 1px solid #f0e6e0; margin: 24px 0;" />
+      <p style="color: #c9836a; font-size: 13px; text-align: center;">lilachi — טיפוח אישי, בדיוק בשבילך 🌿</p>
+    </div>
+  `;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from,
+      to,
+      subject: "קוד האימות שלך מ-lilachi",
+      html,
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Resend API error ${res.status}: ${body}`);
+  }
+
+  return await res.json();
 }
 
 // ── Send OTP ─────────────────────────────────────────────
@@ -65,23 +98,7 @@ export async function sendOTP(email) {
     lastSent: now,
   });
 
-  await transporter.sendMail({
-    from: `"lilachi ✨" <${process.env.GMAIL_USER}>`,
-    to: email,
-    subject: "קוד האימות שלך מ-lilachi",
-    html: `
-      <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px; background: #fdf9f7; border-radius: 16px; border: 1px solid #f0e6e0;">
-        <h2 style="color: #4a3728; margin-bottom: 8px;">קוד האימות שלך</h2>
-        <p style="color: #6a5a50; margin-bottom: 24px;">הזיני את הקוד הבא כדי להמשיך ולקבל את המלצות הטיפוח האישיות שלך:</p>
-        <div style="background: #fff; border: 2px solid #c9836a; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;">
-          <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #c9836a;">${otp}</span>
-        </div>
-        <p style="color: #9a8880; font-size: 13px;">הקוד תקף ל-5 דקות. אם לא ביקשת קוד, ניתן להתעלם ממייל זה.</p>
-        <hr style="border: none; border-top: 1px solid #f0e6e0; margin: 24px 0;" />
-        <p style="color: #c9836a; font-size: 13px; text-align: center;">lilachi — טיפוח אישי, בדיוק בשבילך 🌿</p>
-      </div>
-    `,
-  });
+  await sendEmail(email, otp);
 
   return { success: true };
 }
