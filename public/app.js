@@ -8,6 +8,7 @@ let texturePreference = "";
 let pregnancyStatus = "";
 let photoDataUrl = "";
 let verifiedToken = "";
+let customerName = "";
 
 // --- Navigation ---
 function goToStep(n) {
@@ -204,13 +205,20 @@ function showPhoneSection() {
 }
 
 async function sendOTPCode() {
+  const name = document.getElementById("customerName").value.trim();
   const email = document.getElementById("emailInput").value.trim();
+  document.getElementById("nameError").textContent = "";
   document.getElementById("phoneError").textContent = "";
 
+  if (!name || name.length < 2) {
+    document.getElementById("nameError").textContent = "נא להזין שם מלא.";
+    return;
+  }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     document.getElementById("phoneError").textContent = "נא להזין כתובת מייל תקינה.";
     return;
   }
+  customerName = name;
 
   const btn = document.getElementById("sendOtpBtn");
   btn.disabled = true;
@@ -282,6 +290,7 @@ async function submitForm() {
     pregnancyStatus,
     photo: photoDataUrl || null,
     verifiedToken,
+    customerName,
   };
 
   // Show loading
@@ -391,8 +400,10 @@ function restart() {
   pregnancyStatus = "";
   photoDataUrl = "";
   verifiedToken = "";
+  customerName = "";
   document.getElementById("age").value = "";
   document.getElementById("sensitivities").value = "";
+  document.getElementById("customerName").value = "";
   document.getElementById("phoneInput").value = "";
   document.getElementById("emailInput").value = "";
   document.getElementById("otpInput").value = "";

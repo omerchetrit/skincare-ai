@@ -150,6 +150,11 @@
         <!-- Email + Phone form -->
         <div id="phoneSection">
           <div class="field">
+            <label for="customerName">שם מלא *</label>
+            <input type="text" id="customerName" placeholder="שם פרטי ושם משפחה" autocomplete="name" />
+            <span class="field-error" id="nameError"></span>
+          </div>
+          <div class="field">
             <label for="emailInput">כתובת מייל *</label>
             <input type="email" id="emailInput" placeholder="name@example.com" inputmode="email" autocomplete="email" />
             <span class="field-error" id="phoneError"></span>
