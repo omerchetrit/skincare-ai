@@ -92,7 +92,19 @@ Respond with this exact JSON structure:
     }
   ],
   "routine_suggestion": "A brief paragraph describing the suggested morning and/or evening routine using the recommended products (in Hebrew)",
-  "general_advice": "1-2 sentences of general skincare advice tailored to this person (in Hebrew)"
+  "general_advice": "1-2 sentences of general skincare advice tailored to this person (in Hebrew)",
+  "selection_reasoning": {
+    "rules_applied": ["list every business rule from BUSINESS RULES that influenced your choices, e.g. 'cobra serum is default serum', 'age 30+ gets evening serum', 'acne → soap טבעי'"],
+    "products_considered_and_rejected": ["product name — reason it was NOT chosen"],
+    "anti_duplication_check": "confirm: did any recommended product appear as a kit component? yes/no + explanation",
+    "per_product_logic": [
+      {
+        "product": "exact product name",
+        "rule_triggered": "which business rule led to this recommendation",
+        "why_this_not_alternative": "why this product over similar alternatives"
+      }
+    ]
+  }
 }`,
   });
 

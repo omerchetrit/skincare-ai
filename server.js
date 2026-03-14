@@ -56,6 +56,49 @@ app.post("/api/recommend", async (req, res) => {
       return { ...rec, product_image: product?.image || "" };
     });
 
+    // ── LLM Selection Reasoning Log ──────────────────────────────
+    const r = result.selection_reasoning;
+    if (r) {
+      console.log("\n╔══════════════════════════════════════════════════════╗");
+      console.log("║           LLM SELECTION REASONING                   ║");
+      console.log("╚══════════════════════════════════════════════════════╝");
+
+      console.log("\n📋 USER PROFILE:");
+      console.log(`   Age: ${age} | Skin: ${skinType} | Texture: ${texturePreference || "—"} | Pregnancy: ${pregnancyStatus || "none"}`);
+      console.log(`   Concerns: ${concerns.join(", ")}`);
+      if (sensitivities) console.log(`   Sensitivities: ${sensitivities}`);
+
+      console.log("\n✅ RECOMMENDED PRODUCTS:");
+      result.recommendations.forEach((rec, i) => {
+        console.log(`   ${i + 1}. [${rec.priority.toUpperCase()}] ${rec.product_name}`);
+      });
+
+      if (r.rules_applied?.length) {
+        console.log("\n📏 BUSINESS RULES APPLIED:");
+        r.rules_applied.forEach((rule) => console.log(`   • ${rule}`));
+      }
+
+      if (r.per_product_logic?.length) {
+        console.log("\n🔍 PER-PRODUCT LOGIC:");
+        r.per_product_logic.forEach((p) => {
+          console.log(`   ▸ ${p.product}`);
+          console.log(`     Rule: ${p.rule_triggered}`);
+          console.log(`     Why not alternative: ${p.why_this_not_alternative}`);
+        });
+      }
+
+      if (r.products_considered_and_rejected?.length) {
+        console.log("\n❌ CONSIDERED & REJECTED:");
+        r.products_considered_and_rejected.forEach((p) => console.log(`   • ${p}`));
+      }
+
+      console.log("\n🛡️  ANTI-DUPLICATION CHECK:");
+      console.log(`   ${r.anti_duplication_check}`);
+
+      console.log("\n══════════════════════════════════════════════════════\n");
+    }
+    // ─────────────────────────────────────────────────────────────
+
     res.json(result);
   } catch (err) {
     console.error(err);
