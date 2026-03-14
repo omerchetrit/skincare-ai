@@ -12,10 +12,10 @@ app.use(express.static("public"));
 
 // POST /api/send-otp
 app.post("/api/send-otp", async (req, res) => {
-  const { phone } = req.body;
-  if (!phone) return res.status(400).json({ error: "מספר טלפון נדרש." });
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "כתובת מייל נדרשת." });
   try {
-    await sendOTP(phone);
+    await sendOTP(email);
     res.json({ success: true });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -24,10 +24,10 @@ app.post("/api/send-otp", async (req, res) => {
 
 // POST /api/verify-otp
 app.post("/api/verify-otp", (req, res) => {
-  const { phone, code, email } = req.body;
-  if (!phone || !code) return res.status(400).json({ error: "טלפון וקוד נדרשים." });
+  const { email, code, phone } = req.body;
+  if (!email || !code) return res.status(400).json({ error: "מייל וקוד נדרשים." });
   try {
-    const { token } = verifyOTP(phone, code, email);
+    const { token } = verifyOTP(email, code, phone);
     res.json({ token });
   } catch (err) {
     res.status(400).json({ error: err.message });

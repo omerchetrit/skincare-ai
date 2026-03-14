@@ -204,11 +204,11 @@ function showPhoneSection() {
 }
 
 async function sendOTPCode() {
-  const phone = document.getElementById("phoneInput").value.trim();
+  const email = document.getElementById("emailInput").value.trim();
   document.getElementById("phoneError").textContent = "";
 
-  if (!phone || phone.replace(/\D/g, "").length < 9) {
-    document.getElementById("phoneError").textContent = "נא להזין מספר טלפון תקין.";
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById("phoneError").textContent = "נא להזין כתובת מייל תקינה.";
     return;
   }
 
@@ -220,13 +220,12 @@ async function sendOTPCode() {
     const res = await fetch("/api/send-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone }),
+      body: JSON.stringify({ email }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);
 
-    // Show OTP input
-    document.getElementById("otpSentNote").textContent = `קוד נשלח למספר ${phone}`;
+    document.getElementById("otpSentNote").textContent = `קוד נשלח ל-${email}`;
     document.getElementById("phoneSection").style.display = "none";
     document.getElementById("otpSection").style.display = "block";
     document.getElementById("otpInput").focus();
@@ -239,9 +238,9 @@ async function sendOTPCode() {
 }
 
 async function verifyOTPCode() {
+  const email = document.getElementById("emailInput").value.trim();
   const phone = document.getElementById("phoneInput").value.trim();
   const code = document.getElementById("otpInput").value.trim();
-  const email = document.getElementById("emailInput").value.trim();
   document.getElementById("otpError").textContent = "";
 
   if (!code || code.length !== 6) {
@@ -257,7 +256,7 @@ async function verifyOTPCode() {
     const res = await fetch("/api/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, code, email }),
+      body: JSON.stringify({ email, code, phone }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error);

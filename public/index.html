@@ -142,21 +142,21 @@
         </div>
       </div>
 
-      <!-- Step 5: Phone Verification -->
+      <!-- Step 5: Email Verification -->
       <div class="step" id="step5">
         <h2>כמעט סיימנו ✨</h2>
-        <p class="hint">אמתי את מספר הטלפון שלך כדי לקבל את ההמלצות</p>
+        <p class="hint">נשלח אליך קוד אימות למייל כדי להמשיך</p>
 
-        <!-- Phone + Email form -->
+        <!-- Email + Phone form -->
         <div id="phoneSection">
           <div class="field">
-            <label for="phoneInput">מספר טלפון *</label>
-            <input type="tel" id="phoneInput" placeholder="050-1234567" inputmode="tel" />
+            <label for="emailInput">כתובת מייל *</label>
+            <input type="email" id="emailInput" placeholder="name@example.com" inputmode="email" autocomplete="email" />
             <span class="field-error" id="phoneError"></span>
           </div>
           <div class="field">
-            <label for="emailInput">כתובת מייל (לא חובה)</label>
-            <input type="email" id="emailInput" placeholder="name@example.com" inputmode="email" />
+            <label for="phoneInput">מספר טלפון (לא חובה)</label>
+            <input type="tel" id="phoneInput" placeholder="050-1234567" inputmode="tel" autocomplete="tel" />
           </div>
           <button type="button" class="btn-next" id="sendOtpBtn" onclick="sendOTPCode()">שלחי קוד אימות ←</button>
         </div>
@@ -172,8 +172,8 @@
           <button type="button" class="btn-submit" id="verifyOtpBtn" onclick="verifyOTPCode()">
             ✨ קבלי המלצות אישיות
           </button>
-          <button type="button" class="btn-back" id="resendBtn" onclick="showPhoneSection()" style="margin-top:10px; width:100%;">
-            → שלחי קוד מחדש / שני מספר
+          <button type="button" class="btn-back" onclick="showPhoneSection()" style="margin-top:10px; width:100%;">
+            → שלחי קוד מחדש / שני מייל
           </button>
         </div>
 
