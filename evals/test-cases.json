@@ -1,0 +1,72 @@
+[
+  {
+    "id": "eval-001",
+    "description": "צעירה עם אקנה הורמונלי",
+    "profile": { "age": "26", "gender": "female", "skinType": "oily", "concerns": ["acne, pimples, blackheads, hormonal acne", "oily skin, excess sebum", "large pores"], "sensitivities": "", "texturePreference": "light", "pregnancyStatus": "" },
+    "expected": {
+      "must_include_type": ["soap_natural", "light_cream", "azelaic_or_yuzu"],
+      "must_not_include": ["קרם תאי גזע", "COBRA Cream"],
+      "notes": "לא להמליץ על קרמים עשירים לעור שמן עם אקנה"
+    }
+  },
+  {
+    "id": "eval-002",
+    "description": "אישה בת 45 עם יובש + קמטים",
+    "profile": { "age": "45", "gender": "female", "skinType": "dry", "concerns": ["dryness", "fine lines and wrinkles", "skin sagging, loss of firmness"], "sensitivities": "", "texturePreference": "rich", "pregnancyStatus": "" },
+    "expected": {
+      "must_include_type": ["stem_cell_or_cobra_cream", "cobra_serum", "multivitamin_serum"],
+      "must_not_include": [],
+      "notes": "גיל 45+ יובש — קרם עשיר + סרום מולטי + קוברה"
+    }
+  },
+  {
+    "id": "eval-003",
+    "description": "אישה בהיריון עם פיגמנטציה",
+    "profile": { "age": "32", "gender": "female", "skinType": "combination", "concerns": ["pigmentation", "dullness"], "sensitivities": "", "texturePreference": "no-preference", "pregnancyStatus": "pregnant" },
+    "expected": {
+      "must_include_type": ["yuzu_serum_or_brightening_cream"],
+      "must_not_include": ["COBRA", "סרום קוברה", "סרום מולטי ויטמין"],
+      "notes": "בהיריון — ללא קוברה, ללא מולטי ויטמין (ויטמין A)"
+    }
+  },
+  {
+    "id": "eval-004",
+    "description": "נערה צעירה בגיל 16 עם אקנה קל",
+    "profile": { "age": "16", "gender": "female", "skinType": "oily", "concerns": ["acne, pimples, blackheads, hormonal acne", "large pores"], "sensitivities": "", "texturePreference": "light", "pregnancyStatus": "" },
+    "expected": {
+      "must_include_type": ["acne_kit_or_azelaic", "soap_natural"],
+      "must_not_include": ["קרם תאי גזע", "ערכת לילה"],
+      "notes": "גיל 16 עם אקנה — ערכת אקנה, לא ערכת לילה"
+    }
+  },
+  {
+    "id": "eval-005",
+    "description": "אישה 38 פיגמנטציה + כהויות עיניים",
+    "profile": { "age": "38", "gender": "female", "skinType": "normal", "concerns": ["pigmentation", "dark circles"], "sensitivities": "", "texturePreference": "no-preference", "pregnancyStatus": "" },
+    "expected": {
+      "must_include_type": ["yuzu_or_night_kit", "eye_product"],
+      "must_not_include": [],
+      "notes": "גיל 38 עם פיגמנטציה — ערכת לילה + מוצר עיניים"
+    }
+  },
+  {
+    "id": "eval-006",
+    "description": "אישה מניקה עם רגישות",
+    "profile": { "age": "30", "gender": "female", "skinType": "sensitive", "concerns": ["sensitivity", "redness", "dryness"], "sensitivities": "רגישות לבישום", "texturePreference": "light", "pregnancyStatus": "breastfeeding" },
+    "expected": {
+      "must_include_type": ["gentle_products"],
+      "must_not_include": ["COBRA", "סרום קוברה", "סרום מולטי ויטמין"],
+      "notes": "מניקה — ללא קוברה, ללא מולטי ויטמין"
+    }
+  },
+  {
+    "id": "eval-007",
+    "description": "אישה 50 עור יבש בוגר",
+    "profile": { "age": "50", "gender": "female", "skinType": "dry", "concerns": ["fine lines and wrinkles", "dullness", "skin sagging, loss of firmness"], "sensitivities": "", "texturePreference": "rich", "pregnancyStatus": "" },
+    "expected": {
+      "must_include_type": ["stem_cell_cream", "cobra_serum", "night_kit"],
+      "must_not_include": [],
+      "notes": "גיל 50 עור יבש — קרם תאי גזע, ערכת לילה, קוברה"
+    }
+  }
+]

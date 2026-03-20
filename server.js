@@ -7,6 +7,36 @@ import { sendOTP, verifyOTP, validateToken } from "./services/otp.js";
 
 const app = express();
 app.use(cors());
+
+/**
+ * Code-level anti-duplication guard.
+ * If a kit is recommended, remove any individual product that is a component of that kit.
+ * This enforces the anti-duplication rule in code rather than relying solely on the LLM.
+ */
+function enforceNoDuplication(recommendations, catalogProducts) {
+  // Build a set of component names for every recommended kit
+  const componentNames = new Set();
+  recommendations.forEach((rec) => {
+    const p = catalogProducts.find((cp) => cp.id === rec.product_id);
+    if (p?.isKit && p.kitComponents.length > 0) {
+      p.kitComponents.forEach((c) => componentNames.add(c.trim().toLowerCase()));
+    }
+  });
+
+  if (componentNames.size === 0) return recommendations;
+
+  const before = recommendations.length;
+  const filtered = recommendations.filter((rec) => {
+    const name = (rec.product_name || "").trim().toLowerCase();
+    return !componentNames.has(name);
+  });
+
+  if (filtered.length < before) {
+    const removed = before - filtered.length;
+    console.log(`\n🛡️  [DEDUP] Removed ${removed} individual product(s) that were already inside a recommended kit.`);
+  }
+  return filtered;
+}
 app.use(express.json({ limit: "35mb" })); // photos up to 25MB → ~34MB base64
 app.use(express.static("public"));
 
@@ -82,16 +112,21 @@ app.post("/api/recommend", async (req, res) => {
       products,
     });
 
-    // Attach product images, IDs and URLs from catalog (Claude doesn't have them)
+    // Resolve product data by ID (tool use guarantees valid IDs from catalog)
     result.recommendations = result.recommendations.map((rec) => {
-      const product = products.find((p) => p.name === rec.product_name);
+      const product = products.find((p) => p.id === rec.product_id);
       return {
         ...rec,
+        product_name: product?.name || rec.product_id,
         product_image: product?.image || "",
-        product_id: product?.id || "",
-        product_url: product?.url || rec.product_url || "",
+        product_url: product?.url || "",
+        product_price: product?.price || "",
+        product_id: product?.id || rec.product_id,
       };
     });
+
+    // Code-level anti-duplication: if a kit is recommended, remove any of its components
+    result.recommendations = enforceNoDuplication(result.recommendations, products);
 
     // ── LLM Selection Reasoning Log ──────────────────────────────
     const r = result.selection_reasoning;
@@ -107,7 +142,7 @@ app.post("/api/recommend", async (req, res) => {
 
       console.log("\n✅ RECOMMENDED PRODUCTS:");
       result.recommendations.forEach((rec, i) => {
-        console.log(`   ${i + 1}. [${rec.priority.toUpperCase()}] ${rec.product_name}`);
+        console.log(`   ${i + 1}. [${rec.priority.toUpperCase()}] ${rec.product_name} (id: ${rec.product_id})`);
       });
 
       if (r.rules_applied?.length) {
