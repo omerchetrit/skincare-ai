@@ -64,24 +64,26 @@ function validateStep(step) {
 // --- Single-select pills ---
 function setupSinglePills(containerId, onSelect) {
   document.getElementById(containerId).addEventListener("click", (e) => {
-    if (!e.target.classList.contains("pill")) return;
+    const pill = e.target.closest(".pill");
+    if (!pill) return;
     document.querySelectorAll(`#${containerId} .pill`).forEach((p) => p.classList.remove("selected"));
-    e.target.classList.add("selected");
-    onSelect(e.target.dataset.value);
+    pill.classList.add("selected");
+    onSelect(pill.dataset.value);
   });
 }
 
 // --- Multi-select pills ---
 function setupMultiPills(containerId, arr) {
   document.getElementById(containerId).addEventListener("click", (e) => {
-    if (!e.target.classList.contains("pill")) return;
-    const val = e.target.dataset.value;
-    if (e.target.classList.contains("selected")) {
-      e.target.classList.remove("selected");
+    const pill = e.target.closest(".pill");
+    if (!pill) return;
+    const val = pill.dataset.value;
+    if (pill.classList.contains("selected")) {
+      pill.classList.remove("selected");
       const idx = arr.indexOf(val);
       if (idx > -1) arr.splice(idx, 1);
     } else {
-      e.target.classList.add("selected");
+      pill.classList.add("selected");
       arr.push(val);
     }
   });
