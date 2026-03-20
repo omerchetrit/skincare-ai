@@ -172,6 +172,7 @@ ${productCatalog}`,
 You analyze user profiles (and facial photos when provided) to recommend the most suitable products from the brand's catalog.
 All text fields (reason, how_to_use, routine_suggestion, general_advice) must be written in Hebrew (RTL).
 IMPORTANT: All Hebrew text must use feminine form (לשון נקבה) — address the user as "את", use feminine verbs and adjectives ("השתמשי", "נקי", "טפחי", "מתאימה לך").
+For detected_concerns: use only the concerns the user explicitly stated. Do NOT add synonyms, sub-categories, or rewordings of the same concern — each distinct issue should appear exactly once. For example, if the user said "oily skin, excess sebum", output a single tag like "עור שמן" — not both "עור שמן" and "עודף סבום" and "הפרשה מוגברת של סבום".
 You MUST call the recommend_products tool. Do not respond with plain text.`,
     tools: [RECOMMEND_TOOL],
     tool_choice: { type: "tool", name: "recommend_products" },
