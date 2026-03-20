@@ -4,6 +4,7 @@ import cors from "cors";
 import { getProducts } from "./services/wix.js";
 import { analyzeAndRecommend } from "./services/claude.js";
 import { sendOTP, verifyOTP, validateToken } from "./services/otp.js";
+import { sendRecommendationsEmail } from "./services/email.js";
 
 const app = express();
 app.use(cors());
@@ -172,6 +173,21 @@ app.post("/api/recommend", async (req, res) => {
     // ─────────────────────────────────────────────────────────────
 
     res.json(result);
+
+    // Fire-and-forget — send branded recommendations email in background
+    sendRecommendationsEmail({
+      to: session.email,
+      customerName: req.body.customerName || "",
+      skinAnalysis: result.skin_analysis,
+      recommendations: result.recommendations,
+      routineSuggestion: result.routine_suggestion,
+      generalAdvice: result.general_advice,
+    }).then(() => {
+      console.log(`[email] Recommendations sent to ${email}`);
+    }).catch((err) => {
+      console.error(`[email] Failed to send recommendations to ${email}:`, err.message);
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

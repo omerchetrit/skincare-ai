@@ -203,9 +203,16 @@
 
     <!-- Loading State -->
     <div class="loading" id="loading" style="display:none;">
-      <div class="spinner"></div>
-      <h2>מנתחת את העור שלך...</h2>
-      <p>המערכת בוחנת את המאפיינים האישיים שלך ומוצאת את המוצרים המתאימים ביותר עבורך. זה לוקח כ-15–30 שניות.</p>
+      <div class="loading-icon">🌿</div>
+      <h2 class="loading-title" id="loadingStageTitle">סורקת את פרופיל העור שלך...</h2>
+      <p class="loading-desc" id="loadingStageDesc">בוחנת את המאפיינים הייחודיים שדיווחת עליהם</p>
+      <div class="loading-bar-wrap">
+        <div class="loading-bar-fill" id="loadingBarFill"></div>
+      </div>
+      <p class="loading-stage-label" id="loadingStageLabel">שלב 1 מתוך 7</p>
+      <div class="loading-email-note" id="loadingEmailNote" style="opacity:0; transition: opacity 0.8s ease;">
+        📬 תקבלי את כל הממצאים גם במייל — אפשר לסגור את הדף ולחזור אליהם בכל עת
+      </div>
     </div>
 
     <!-- Results -->

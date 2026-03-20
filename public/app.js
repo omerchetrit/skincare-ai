@@ -287,6 +287,67 @@ async function verifyOTPCode() {
   }
 }
 
+// --- Loading stages ---
+const LOADING_STAGES = [
+  { title: "🔍 סורקת את פרופיל העור שלך",      desc: "בוחנת את המאפיינים הייחודיים שדיווחת עליהם" },
+  { title: "🧬 מזהה דפוסים ביולוגיים",          desc: "מזהה קשרים בין סוג העור, הגיל ואופי הבעיות" },
+  { title: "⚗️ מנתחת את המנגנונים העוריים",     desc: "חוקרת את הגורמים הפנימיים שמאחורי מה שרואים" },
+  { title: "🌿 מחפשת פתרונות נטורופתיים",       desc: "בוחנת את הקטלוג ומוצאת את מה שמתאים לפרופיל שלך" },
+  { title: "💡 בוחרת מוצרים בשבילך",            desc: "מתאימה כל מוצר לצרכים הספציפיים שלך" },
+  { title: "📋 בונה את שגרת הטיפוח שלך",        desc: "מעצבת שגרת בוקר וערב אישית" },
+  { title: "✨ מסיימת את הדו״ח האישי שלך",      desc: "כמעט מוכן — עוד רגע" },
+];
+
+let loadingInterval = null;
+
+function startLoadingStages() {
+  let stage = 0;
+  const total = LOADING_STAGES.length;
+  const intervalMs = 12000; // advance every 12 seconds ≈ 84s total
+
+  function applyStage(i) {
+    const s = LOADING_STAGES[Math.min(i, total - 1)];
+    const titleEl = document.getElementById("loadingStageTitle");
+    const descEl  = document.getElementById("loadingStageDesc");
+    const fillEl  = document.getElementById("loadingBarFill");
+    const labelEl = document.getElementById("loadingStageLabel");
+
+    // Fade out → update → fade in
+    titleEl.style.opacity = "0";
+    descEl.style.opacity  = "0";
+    setTimeout(() => {
+      titleEl.textContent = s.title;
+      descEl.textContent  = s.desc;
+      titleEl.style.opacity = "1";
+      descEl.style.opacity  = "1";
+    }, 350);
+
+    // Progress bar: 5% at stage 0, 100% only when done (not during loading)
+    const pct = Math.round(((i + 1) / total) * 88); // cap at 88% until real finish
+    fillEl.style.width = pct + "%";
+    labelEl.textContent = `שלב ${Math.min(i + 1, total)} מתוך ${total}`;
+
+    // Show email note after ~20 seconds (stage 1)
+    if (i >= 1) {
+      document.getElementById("loadingEmailNote").style.opacity = "1";
+    }
+  }
+
+  applyStage(0);
+  loadingInterval = setInterval(() => {
+    stage++;
+    if (stage < total) applyStage(stage);
+    else clearInterval(loadingInterval); // stay on last stage
+  }, intervalMs);
+}
+
+function stopLoadingStages() {
+  if (loadingInterval) { clearInterval(loadingInterval); loadingInterval = null; }
+  // Fill bar to 100% on success
+  const fillEl = document.getElementById("loadingBarFill");
+  if (fillEl) fillEl.style.width = "100%";
+}
+
 // --- Submit ---
 async function submitForm() {
   const payload = {
@@ -308,6 +369,7 @@ async function submitForm() {
   document.getElementById("stepLabel").style.display = "none";
   document.querySelector(".header").style.display = "none";
   document.getElementById("loading").style.display = "block";
+  startLoadingStages();
 
   try {
     const res = await fetch("/api/recommend", {
@@ -319,8 +381,10 @@ async function submitForm() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "משהו השתבש, נסי שוב.");
 
+    stopLoadingStages();
     showResults(data);
   } catch (err) {
+    stopLoadingStages();
     showError(true, err.message);
   }
 }
