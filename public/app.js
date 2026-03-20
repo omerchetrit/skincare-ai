@@ -4,6 +4,7 @@ const totalSteps = 5;
 let gender = "";
 let skinType = "";
 let concerns = [];
+let concernLabels = []; // Hebrew display labels for selected concerns
 let texturePreference = "";
 let pregnancyStatus = "";
 let photoDataUrl = "";
@@ -78,13 +79,19 @@ function setupMultiPills(containerId, arr) {
     const pill = e.target.closest(".pill");
     if (!pill) return;
     const val = pill.dataset.value;
+    const label = pill.dataset.label || pill.textContent.trim();
     if (pill.classList.contains("selected")) {
       pill.classList.remove("selected");
       const idx = arr.indexOf(val);
       if (idx > -1) arr.splice(idx, 1);
+      if (containerId === "concernsPills") {
+        const li = concernLabels.indexOf(label);
+        if (li > -1) concernLabels.splice(li, 1);
+      }
     } else {
       pill.classList.add("selected");
       arr.push(val);
+      if (containerId === "concernsPills") concernLabels.push(label);
     }
   });
 }
@@ -324,9 +331,9 @@ function showResults(data) {
   const results = document.getElementById("results");
   results.style.display = "block";
 
-  // Skin analysis card
+  // Skin analysis card — use the user's own Hebrew pill labels, not Claude's inferred concerns
   const analysis = data.skin_analysis || {};
-  const concernTags = (analysis.detected_concerns || []).map((c) => `<span class="analysis-tag">${c}</span>`).join("");
+  const concernTags = concernLabels.map((c) => `<span class="analysis-tag">${c}</span>`).join("");
   document.getElementById("analysisCard").innerHTML = `
     <h3>🔍 ניתוח העור שלך</h3>
     <div class="analysis-row">${concernTags}</div>
@@ -451,6 +458,7 @@ function restart() {
   gender = "";
   skinType = "";
   concerns.length = 0;
+  concernLabels.length = 0;
   texturePreference = "";
   pregnancyStatus = "";
   photoDataUrl = "";
