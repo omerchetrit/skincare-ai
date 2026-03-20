@@ -54,6 +54,7 @@ CREAMS:
 SOAPS:
 - בכל רכישה ממליצים על הסבון שלנו: סבון פנים אובליפיחה גדול.
 - אם יש אקנה — ממליצים על סבון טבעי במקום.
+- IMPORTANT: The soap is its own separate product in the recommendations list. Do NOT mention the soap inside the reason or how_to_use of any other product. The soap gets its own reason and how_to_use fields.
 
 EYE PRODUCTS:
 - מוצרי עיניים — למצבים שבהם יש תלונות על עיניים.
