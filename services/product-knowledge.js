@@ -18,21 +18,21 @@ so you can count correctly against the serum/cream limits.
 
 COBRA / סרום קוברה (also sold as 30ml or 50ml)
   Type: SERUM (morning or evening)
-  For: firming, lifting, anti-wrinkle, general daily serum for everyone
+  For: firming, lifting, anti-wrinkle, skin sagging, loss of firmness, general daily serum for everyone
   Key ingredients: cobra peptide (botox-like), antioxidants
   Note: This is the DEFAULT serum. Suits everyone. Morning or evening.
 
 סרום לילה - סורבה יוזו (קיים בשני גדלים: 30מ"ל ו-50מ"ל)
   Type: SERUM (evening only)
-  For: pigmentation, acne scars, post-acne redness, uneven texture
+  For: pigmentation, acne, pimples, oily skin, acne scars, post-acne marks, post-acne redness, uneven texture, sun damage
   Key ingredients: azelaic acid, niacinamide (B3), vitamin C/A/E, yuzu essential oil
-  Note: Recommended when pigmentation is a concern. Evening only.
+  Note: Recommended when pigmentation, acne, or post-acne marks are a concern. Evening only.
 
 סרום מולטי ויטמין
   Type: SERUM (morning or evening)
-  For: dry skin, fine lines, mature skin (45+)
+  For: dry skin, fine lines, mature skin (45+), rough texture, keratosis pilaris, dry lips, dry hands
   Key ingredients: vitamin C, E, omega 3/6/9
-  Note: Recommended when dryness or mature skin (45+) is the primary concern.
+  Note: Recommended when dryness, mature skin (45+), or rough texture is the primary concern.
 
 סרום חומצה היאלורונית / סרום חומצה היאלורונית-ורד (same product, two names)
   Type: SERUM (morning or evening)
@@ -68,22 +68,22 @@ Liloosh Active Cream
 
 קרם הבהרה והזנה ללילה
   Type: CREAM — RICH texture (evening only)
-  For: pigmentation, dark spots, seborrhea, atopic dermatitis
+  For: pigmentation, dark spots, sun damage, post-acne marks, seborrhea, atopic dermatitis
   Note: Evening only. Also treats seborrhea and atopic dermatitis.
 
 קרם פנים - תאי גזע
   Type: CREAM — RICH texture (day or evening)
-  For: dry skin, ages 40+, anti-aging, firming
+  For: dry skin, ages 40+, anti-aging, firming, skin sagging, loss of firmness
   Key ingredients: beet stem cells, geranium
 
 COBRA Cream / קרם קוברה
   Type: CREAM — MEDIUM/SILKY texture (day or evening)
-  For: firming, collagen boost, anti-aging
+  For: firming, collagen boost, anti-aging, skin sagging, loss of firmness
   Key ingredients: cobra peptide, moisturizers
 
 קרם חומצה אזלאית (קיים בשני גדלים: 30מ"ל ו-regular)
   Type: CREAM — LIGHT texture (evening preferred)
-  For: oily skin balance, redness, post-acne scars, brightening
+  For: acne, pimples, hormonal acne, oily skin, excess sebum, redness, post-acne scars, post-acne marks, brightening, large pores
 
 --- INDIVIDUAL EYE PRODUCTS ---
 
