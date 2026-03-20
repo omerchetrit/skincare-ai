@@ -165,7 +165,39 @@ Default is feminine throughout. Switch to masculine only if the user explicitly 
 
 ---
 
-## 6. Micro-Copy Examples
+## 6. Approved Skincare Vocabulary
+
+**Critical rule: never invent a Hebrew word.** If you are not certain a word exists in standard Israeli Hebrew, use a simpler, shorter construction instead. The words below are the approved terms for concepts that commonly produce errors.
+
+| English concept | ❌ Do NOT write | ✅ Write instead |
+|---|---|---|
+| predisposition / prone to | קיביעות, נטיעות, נסיות | נטייה ל / נוטה ל |
+| tendency | קביעות, נטיות | נטייה |
+| skin condition | מצב עורי, מצב דרמטולוגי | מצב העור, סוג העור |
+| sensitivity | סנסיטיביות | רגישות |
+| combination skin | עור קומבינציה | עור מעורב |
+| oily skin | עור אויילי | עור שמן |
+| sebum / sebum production | סבאום | סבום, הפרשת שמן |
+| breakout | בריקאוט | התפרצות אקנה, פצעונים |
+| active acne | אקנה אקטיבי | אקנה פעיל |
+| post-acne marks | פוסט-אקנה | סימני אקנה, כתמים שנשארים אחרי אקנה |
+| hydration | הידרציה | לחות, הלחות |
+| moisturisation | מויסצ'ריזציה | הלחות, הזנה |
+| exfoliation | אקספוליאציה | קילוף, ניקוי עמוק |
+| hyperpigmentation | היפרפיגמנטציה | פיגמנטציה, כתמי פיגמנטציה |
+| texture (skin texture) | טקסצ'ר | מרקם |
+| pores | פורות | נקבוביות |
+| enlarged pores | נקבוביות אנלרג'ד | נקבוביות מורחבות |
+| firmness / elasticity | פירמנס, אלסטיסיטי | מוצקות, גמישות |
+| collagen | קולגן | קולגן (this one is fine as-is) |
+| anti-aging | אנטי-איג'ינג | נוגד הזדקנות / להאט את תהליך ההזדקנות |
+| SPF / sun protection | לכתוב "SPF" בלבד | קרם הגנה, הגנה מהשמש (מספר SPF בסוגריים אם רלוונטי) |
+
+**When in doubt:** use "נטייה ל" for predisposition, "מצב" for condition, and "רגישות" for sensitivity. These three cover 80% of edge cases.
+
+---
+
+## 7. Micro-Copy Examples
 
 These show the target register. Study them — they demonstrate the right balance
 of specificity, directness, and subtle personality.
