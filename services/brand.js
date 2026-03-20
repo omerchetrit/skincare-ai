@@ -62,14 +62,34 @@ export function loadCorrections() {
 }
 
 /**
- * Returns the full brand context block (guidelines + corrections)
+ * Returns the Hebrew writing guide as a formatted string for Claude.
+ * Covers forbidden patterns, preferred phrasing, and micro-copy examples.
+ * Falls back gracefully if the file is missing or unreadable.
+ */
+export function loadHebrewWritingGuide() {
+  try {
+    return readFileSync(resolve(BRAND_DIR, "hebrew-writing.md"), "utf-8");
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Returns the full brand context block (guidelines + hebrew-writing + corrections)
  * ready to append to Claude's system prompt.
+ *
+ * Ordering is intentional:
+ *   1. guidelines.md   — strategic tone and product rules
+ *   2. hebrew-writing.md — linguistic mechanics (forbidden patterns, field templates)
+ *   3. corrections.json — past mistakes that override everything above
  */
 export function getBrandContext() {
-  const guidelines = loadBrandGuidelines();
-  const corrections = loadCorrections();
+  const guidelines    = loadBrandGuidelines();
+  const hebrewGuide   = loadHebrewWritingGuide();
+  const corrections   = loadCorrections();
   const parts = [];
-  if (guidelines) parts.push("=== BRAND GUIDELINES ===\n" + guidelines + "\n=== END BRAND GUIDELINES ===");
-  if (corrections) parts.push(corrections);
+  if (guidelines)   parts.push("=== BRAND GUIDELINES ===\n" + guidelines + "\n=== END BRAND GUIDELINES ===");
+  if (hebrewGuide)  parts.push("=== HEBREW WRITING GUIDE ===\n" + hebrewGuide + "\n=== END HEBREW WRITING GUIDE ===");
+  if (corrections)  parts.push(corrections);
   return parts.join("\n\n");
 }
