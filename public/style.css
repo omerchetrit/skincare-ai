@@ -268,7 +268,7 @@ body {
   margin-bottom: 32px;
 }
 .analysis-card h3 { color: #4a3728; margin-bottom: 14px; font-size: 1.1rem; }
-.analysis-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.analysis-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
 .analysis-tag {
   padding: 5px 12px;
   background: #c9836a22;
@@ -277,7 +277,26 @@ body {
   border-radius: 50px;
   font-size: 0.82rem;
 }
-.analysis-text { color: #6a5a50; font-size: 0.92rem; line-height: 1.6; }
+.analysis-skin-type {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a3728;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0e0d8;
+}
+.analysis-section {
+  margin-top: 14px;
+}
+.analysis-section-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #c9836a;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.analysis-text { color: #6a5a50; font-size: 0.92rem; line-height: 1.7; }
 
 .section-title { color: #4a3728; font-size: 1.1rem; margin-bottom: 16px; }
 

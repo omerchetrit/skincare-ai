@@ -20,10 +20,20 @@ const RECOMMEND_TOOL = {
         type: "object",
         properties: {
           detected_concerns: { type: "array", items: { type: "string" } },
-          skin_type_assessment: { type: "string" },
-          overall_condition: { type: "string" },
+          skin_type_assessment: {
+            type: "string",
+            description: "Short Hebrew label for the skin type — e.g. 'עור שמן עם נטייה לאקנה'. No age or parentheses.",
+          },
+          root_cause_analysis: {
+            type: "string",
+            description: "2-3 Hebrew sentences explaining the biological/naturopathic mechanism behind this person's skin condition. Use professional dermatology and naturopathy terminology (e.g. דיסרגולציה של הסבום, היפרקרטינציה, חיידק C. acnes, תגובה דלקתית, שיבוש מחסום הלחות, רגישות קולטני האנדרוגנים). Address the user directly (לשון נקבה), warm-professional tone.",
+          },
+          prognosis: {
+            type: "string",
+            description: "1-2 Hebrew sentences describing the expected improvement timeline and outcome with consistent use of the recommended products. Be realistic and encouraging. Use professional but accessible language.",
+          },
         },
-        required: ["detected_concerns", "skin_type_assessment", "overall_condition"],
+        required: ["detected_concerns", "skin_type_assessment", "root_cause_analysis", "prognosis"],
       },
       recommendations: {
         type: "array",
@@ -168,10 +178,15 @@ ${productCatalog}`,
   const response = await client.messages.create({
     model: "claude-sonnet-4-5",
     max_tokens: 4096,
-    system: `You are an expert skincare consultant for Liloosh, an Israeli natural skincare brand.
+    system: `You are an expert skincare consultant for Liloosh, an Israeli natural skincare brand. You combine naturopathic philosophy with evidence-based dermatology.
 You analyze user profiles (and facial photos when provided) to recommend the most suitable products from the brand's catalog.
-All text fields (reason, how_to_use, routine_suggestion, general_advice) must be written in Hebrew (RTL).
+All text fields (reason, how_to_use, routine_suggestion, general_advice, root_cause_analysis, prognosis) must be written in Hebrew (RTL).
 IMPORTANT: All Hebrew text must use feminine form (לשון נקבה) — address the user as "את", use feminine verbs and adjectives ("השתמשי", "נקי", "טפחי", "מתאימה לך").
+
+SKIN ANALYSIS TONE:
+- root_cause_analysis: Write as a naturopathic dermatology expert explaining the biological mechanism to the client. Use professional terms naturally — e.g. "דיסרגולציה של הסבום", "היפרקרטינציה פוליקולרית", "תגובה דלקתית", "שיבוש מחסום הלחות", "עקה חמצונית", "מיקרוביום עורי". Do NOT simplify to the point of being generic. Be specific to THIS person's profile.
+- prognosis: Be specific and concrete — mention realistic timeframes (e.g. "תוך 4-6 שבועות"), what the user can expect to see improve first, and what takes longer. Encouraging but not marketing-speak.
+
 STRICT CONCERN RULES:
 - In detected_concerns: list ONLY concerns the user explicitly stated. Do NOT add inferred, related, or typical concerns the user did not mention. Do NOT expand one concern into sub-categories. If the user said "acne and pimples", output one tag — "אקנה ופצעונים" — not "ראשים שחורים", not "אקנה הורמונלית".
 - In reason and how_to_use fields: describe ONLY the specific product being recommended — its ingredients, mechanism, texture. Do NOT mention other products in the recommendation set, companion products, or products not listed in that product's catalog entry.

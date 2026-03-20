@@ -337,8 +337,17 @@ function showResults(data) {
   document.getElementById("analysisCard").innerHTML = `
     <h3>🔍 ניתוח העור שלך</h3>
     <div class="analysis-row">${concernTags}</div>
-    <p class="analysis-text"><strong>סוג עור:</strong> ${analysis.skin_type_assessment || "—"}</p>
-    <p class="analysis-text" style="margin-top:8px;">${analysis.overall_condition || ""}</p>
+    <p class="analysis-skin-type">${analysis.skin_type_assessment || "—"}</p>
+    ${analysis.root_cause_analysis ? `
+      <div class="analysis-section">
+        <div class="analysis-section-title">⚗️ מה קורה בעור שלך</div>
+        <p class="analysis-text">${analysis.root_cause_analysis}</p>
+      </div>` : ""}
+    ${analysis.prognosis ? `
+      <div class="analysis-section">
+        <div class="analysis-section-title">🎯 לאן מכאן</div>
+        <p class="analysis-text">${analysis.prognosis}</p>
+      </div>` : ""}
   `;
 
   // Products
