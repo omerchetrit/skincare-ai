@@ -166,7 +166,7 @@ ${productCatalog}`,
   });
 
   const response = await client.messages.create({
-    model: "claude-haiku-4-5",
+    model: "claude-sonnet-4-5",
     max_tokens: 4096,
     system: `You are an expert skincare consultant for Liloosh, an Israeli natural skincare brand.
 You analyze user profiles (and facial photos when provided) to recommend the most suitable products from the brand's catalog.
