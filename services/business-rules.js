@@ -50,7 +50,7 @@ CREAMS:
 - קרם liloosh active cream הוא ממש קליל ומתאים לצעירות.
 - קרם יום לעור מעורב עד שמן — מתאים לכל גיל עם עור שמן או אקנה (לא רק עד 28).
 - קרם יום לעור צעיר — מתאים לגילאי 12–28 ללא פצעונים (או מעט פצעונים).
-- Texture preference stated by user: follow it when choosing between cream options.
+- Texture preference stated by user: follow it when choosing between cream options. If the user selected "no preference" (תחליטו בשבילי), choose texture based on skin type: oily/combination → light; dry/normal/sensitive → rich.
 
 SOAPS:
 - בכל רכישה ממליצים על הסבון שלנו: סבון פנים אובליפיחה גדול.
