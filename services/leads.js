@@ -102,6 +102,9 @@ export async function saveLead(inputs, email, result) {
     },
   };
 
+  const payload = { dataCollectionId: collectionId, dataItem };
+  console.log(`[leads] Saving lead for ${email} to collection "${collectionId}"...`);
+
   const res = await fetch("https://www.wixapis.com/wix-data/v2/items", {
     method: "POST",
     headers: {
@@ -109,13 +112,13 @@ export async function saveLead(inputs, email, result) {
       Authorization: apiKey,
       "wix-site-id": siteId,
     },
-    body: JSON.stringify({ dataCollectionId: collectionId, dataItem }),
+    body: JSON.stringify(payload),
   });
 
+  const responseText = await res.text();
   if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`[leads] Wix Data save failed ${res.status}: ${txt}`);
+    throw new Error(`Wix Data save failed ${res.status}: ${responseText}`);
   }
 
-  console.log(`[leads] Saved lead for ${email}`);
+  console.log(`[leads] Saved lead for ${email} — Wix response: ${responseText.slice(0, 200)}`);
 }
