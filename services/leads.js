@@ -34,26 +34,39 @@ async function uploadPhotoToWix(base64DataUrl) {
 
   const urlData = JSON.parse(urlBody);
   const uploadUrl = urlData.uploadUrl;
-  console.log(`[leads] Got upload URL, uploading binary...`);
+  console.log(`[leads] generate-upload-url response: ${JSON.stringify(urlData).slice(0, 500)}`);
 
-  // 2. Upload the binary to the signed URL
-  const uploadRes = await fetch(uploadUrl, {
+  // 2. Upload the binary to the signed URL (filename query param required per Wix docs)
+  const separator = uploadUrl.includes("?") ? "&" : "?";
+  const uploadRes = await fetch(`${uploadUrl}${separator}filename=${encodeURIComponent(fileName)}`, {
     method: "PUT",
     headers: { "Content-Type": mimeType },
     body: buffer,
   });
 
   const uploadBody = await uploadRes.text();
+  console.log(`[leads] Upload PUT response (${uploadRes.status}): ${uploadBody.slice(0, 500)}`);
   if (!uploadRes.ok) {
     throw new Error(`Photo binary upload failed ${uploadRes.status}: ${uploadBody}`);
   }
 
-  const uploadData = JSON.parse(uploadBody);
-  const fileUrl = uploadData.file?.url || uploadData.fileUrl || "";
-  console.log(`[leads] Photo uploaded: ${fileUrl || "(no URL in response)"}`);
-  if (!fileUrl) {
-    console.log(`[leads] Full upload response: ${uploadBody.slice(0, 500)}`);
+  // Wix PUT may return file info or just a status — try to extract URL
+  let fileUrl = "";
+  try {
+    const uploadData = JSON.parse(uploadBody);
+    fileUrl = uploadData.file?.url || uploadData.fileUrl || uploadData.file?.fileUrl || "";
+    // If response has a file ID / path, construct the static URL
+    if (!fileUrl && uploadData.file?.id) {
+      fileUrl = `https://static.wixstatic.com/media/${uploadData.file.id}`;
+    }
+  } catch {
+    // PUT returned non-JSON (just a status) — check generate-upload-url response for file path
+    if (urlData.file?.id) {
+      fileUrl = `https://static.wixstatic.com/media/${urlData.file.id}`;
+    }
   }
+
+  console.log(`[leads] Photo result: ${fileUrl || "(no URL — check logs above)"}`);
   return fileUrl;
 }
 
