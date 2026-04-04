@@ -12,43 +12,49 @@ async function uploadPhotoToWix(base64DataUrl) {
   const [header, data] = base64DataUrl.split(",");
   const mimeType = header.match(/:(.*?);/)[1]; // e.g. "image/jpeg"
   const buffer   = Buffer.from(data, "base64");
+  const fileName = `lead-${Date.now()}.jpg`;
+
+  console.log(`[leads] Uploading photo (${(buffer.length / 1024).toFixed(0)} KB, ${mimeType})...`);
 
   // 1. Request a signed upload URL from Wix Media Manager
-  const urlRes = await fetch("https://www.wixapis.com/site-media/v1/files/upload/url", {
+  const urlRes = await fetch("https://www.wixapis.com/site-media/v1/files/generate-upload-url", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: apiKey,
       "wix-site-id": siteId,
     },
-    body: JSON.stringify({
-      mimeType,
-      fileName: `lead-${Date.now()}.jpg`,
-      parentFolderId: "leads-photos", // optional folder, Wix creates it if missing
-    }),
+    body: JSON.stringify({ mimeType, fileName }),
   });
 
+  const urlBody = await urlRes.text();
   if (!urlRes.ok) {
-    const txt = await urlRes.text();
-    throw new Error(`[leads] Media upload URL failed ${urlRes.status}: ${txt}`);
+    throw new Error(`Media upload URL failed ${urlRes.status}: ${urlBody}`);
   }
 
-  const { uploadUrl, uploadToken } = await urlRes.json();
+  const urlData = JSON.parse(urlBody);
+  const uploadUrl = urlData.uploadUrl;
+  console.log(`[leads] Got upload URL, uploading binary...`);
 
   // 2. Upload the binary to the signed URL
-  const uploadRes = await fetch(`${uploadUrl}&uploadToken=${uploadToken}`, {
+  const uploadRes = await fetch(uploadUrl, {
     method: "PUT",
     headers: { "Content-Type": mimeType },
     body: buffer,
   });
 
+  const uploadBody = await uploadRes.text();
   if (!uploadRes.ok) {
-    const txt = await uploadRes.text();
-    throw new Error(`[leads] Photo upload failed ${uploadRes.status}: ${txt}`);
+    throw new Error(`Photo binary upload failed ${uploadRes.status}: ${uploadBody}`);
   }
 
-  const uploadData = await uploadRes.json();
-  return uploadData.file?.url || "";
+  const uploadData = JSON.parse(uploadBody);
+  const fileUrl = uploadData.file?.url || uploadData.fileUrl || "";
+  console.log(`[leads] Photo uploaded: ${fileUrl || "(no URL in response)"}`);
+  if (!fileUrl) {
+    console.log(`[leads] Full upload response: ${uploadBody.slice(0, 500)}`);
+  }
+  return fileUrl;
 }
 
 /**
