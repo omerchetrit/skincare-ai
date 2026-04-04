@@ -190,7 +190,7 @@ app.post("/api/recommend", async (req, res) => {
     });
 
     // Fire-and-forget — save lead to Wix CMS + notify admin
-    saveLead(req.body, session.email, result)
+    saveLead(req.body, session.email, session.phone, result)
       .catch((err) => console.error("[leads] Failed to save lead:", err.message));
 
     sendLeadNotification({ email: session.email, inputs: req.body, result })

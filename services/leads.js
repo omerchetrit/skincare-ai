@@ -73,9 +73,10 @@ async function uploadPhotoToWix(base64DataUrl) {
 /**
  * @param {object} inputs   — raw request body from /api/recommend
  * @param {string} email    — verified email from session token
+ * @param {string} phone    — verified phone from session token
  * @param {object} result   — enriched Claude output (after product data merge)
  */
-export async function saveLead(inputs, email, result) {
+export async function saveLead(inputs, email, phone, result) {
   const apiKey        = process.env.WIX_API_KEY;
   const siteId        = process.env.WIX_SITE_ID;
   const collectionId  = process.env.WIX_LEADS_COLLECTION || "leads";
@@ -103,7 +104,7 @@ export async function saveLead(inputs, email, result) {
     data: {
       name:               inputs.customerName || "",
       email:              email,
-      phone:              inputs.phone || "",
+      phone:              phone || "",
       age:                Number(inputs.age) || 0,
       gender:             inputs.gender || "",
       skinType:           inputs.skinType || "",
