@@ -141,8 +141,32 @@ export async function sendLeadNotification({ email, inputs, result }) {
     return;
   }
 
-  const { customerName = "", age = "", skinType = "", concerns = [], phone = "" } = inputs;
-  const subject = `ליד חדש 🌿 — ${customerName || email}, ${age}, ${skinType}`;
+  const { customerName = "", age = "", skinType = "", concerns = [], phone = "", gender = "", pregnancyStatus = "" } = inputs;
+
+  // Translate English values to Hebrew for display
+  const genderMap = { female: "אישה", male: "גבר" };
+  const skinTypeMap = { oily: "שמן", dry: "יבש", combination: "מעורב", normal: "רגיל", sensitive: "רגיש", other: "אחר" };
+  const concernMap = {
+    "acne": "אקנה", "oily skin": "עור שמן", "blackheads": "ראשים שחורים",
+    "hormonal acne": "אקנה הורמונלית", "acne scars": "צלקות אקנה",
+    "pigmentation": "פיגמנטציה", "sun damage": "נזקי שמש",
+    "fine lines": "קמטוטים", "wrinkles": "קמטים", "dryness": "יובש",
+    "redness": "אדמומיות", "large pores": "נקבוביות מורחבות",
+    "uneven skin tone": "גוון עור לא אחיד", "uneven texture": "מרקם לא חלק",
+    "dark circles": "כהויות בעיניים", "puffy eyes": "נפיחות בעיניים",
+    "sagging": "רפיון", "dullness": "עור עייף וחסר ברק",
+    "stretch marks": "סימני מתיחה", "keratosis pilaris": "קרטוזיס פילריס",
+    "seborrhea": "סבוריאה", "atopic dermatitis": "אטופיק דרמטיטיס",
+    "rosacea": "רוזציאה",
+  };
+  const pregnancyMap = { none: "לא", pregnant: "בהריון", breastfeeding: "מניקה" };
+
+  const heGender = genderMap[gender] || gender || "—";
+  const heSkinType = skinTypeMap[skinType] || skinType || "—";
+  const hePregnancy = pregnancyMap[pregnancyStatus] || pregnancyStatus || "—";
+  const heConcerns = (concerns || []).map((c) => concernMap[c] || c).join(", ");
+
+  const subject = `ליד חדש 🌿 — ${customerName || email}, ${age}, ${heSkinType}`;
 
   const productsListHtml = (result.recommendations || [])
     .map((r) => {
@@ -174,9 +198,11 @@ export async function sendLeadNotification({ email, inputs, result }) {
               <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px; width:120px;">שם</td><td style="color:${BRAND_BROWN}; font-weight:600;">${customerName}</td></tr>
               <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">מייל</td><td><a href="mailto:${email}" style="color:${BRAND_TERRA};">${email}</a></td></tr>
               <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">טלפון</td><td style="color:${BRAND_BROWN};">${phone || "—"}</td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">מין</td><td style="color:${BRAND_BROWN};">${heGender}</td></tr>
               <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">גיל</td><td style="color:${BRAND_BROWN};">${age}</td></tr>
-              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">סוג עור</td><td style="color:${BRAND_BROWN};">${skinType}</td></tr>
-              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px; vertical-align:top;">תלונות</td><td style="color:${BRAND_BROWN};">${(concerns || []).join(", ")}</td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">הריון והנקה</td><td style="color:${BRAND_BROWN};">${hePregnancy}</td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">סוג עור</td><td style="color:${BRAND_BROWN};">${heSkinType}</td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px; vertical-align:top;">תלונות</td><td style="color:${BRAND_BROWN};">${heConcerns}</td></tr>
             </table>
 
             <hr style="border:none; border-top:1px solid ${BORDER_COLOR}; margin:18px 0;" />
