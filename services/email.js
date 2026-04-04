@@ -132,6 +132,88 @@ function buildEmailHtml({ customerName, skinAnalysis, recommendations, routineSu
 </html>`;
 }
 
+export async function sendLeadNotification({ email, inputs, result }) {
+  const apiKey   = process.env.RESEND_API_KEY;
+  const adminTo  = process.env.ADMIN_EMAIL;
+  const from     = process.env.RESEND_FROM || "Lilachi <onboarding@resend.dev>";
+  if (!apiKey || !adminTo) {
+    console.warn("[email] RESEND_API_KEY or ADMIN_EMAIL not set — skipping lead notification");
+    return;
+  }
+
+  const { customerName = "", age = "", skinType = "", concerns = [], phone = "" } = inputs;
+  const subject = `ליד חדש 🌿 — ${customerName || email}, ${age}, ${skinType}`;
+
+  const productsListHtml = (result.recommendations || [])
+    .map((r) => {
+      const badge = priorityLabel(r.priority);
+      return `<li style="margin-bottom:6px;">
+        <span style="background:${badge.color}22; color:${badge.color}; border-radius:50px; padding:1px 8px; font-size:11px; font-weight:700; margin-left:6px;">${badge.he}</span>
+        <strong>${r.product_name}</strong>
+      </li>`;
+    })
+    .join("");
+
+  const html = `
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head><meta charset="UTF-8" /></head>
+<body style="margin:0; padding:0; background:${BG_PAGE}; font-family: Arial, sans-serif; direction:rtl;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:${BG_PAGE}; padding:32px 16px;">
+    <tr><td align="center">
+      <table width="100%" style="max-width:520px; background:${BG_CARD}; border-radius:20px; border:1.5px solid ${BORDER_COLOR};">
+        <tr>
+          <td style="background:linear-gradient(135deg,${BRAND_TERRA},${BRAND_LIGHT}); padding:24px 28px; border-radius:18px 18px 0 0; text-align:center;">
+            <div style="font-size:1.8rem; margin-bottom:6px;">🌿</div>
+            <h1 style="color:#fff; font-size:18px; margin:0;">ליד חדש נכנס!</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:24px;">
+            <table width="100%" style="border-collapse:collapse;">
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px; width:120px;">שם</td><td style="color:${BRAND_BROWN}; font-weight:600;">${customerName}</td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">מייל</td><td><a href="mailto:${email}" style="color:${BRAND_TERRA};">${email}</a></td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">טלפון</td><td style="color:${BRAND_BROWN};">${phone || "—"}</td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">גיל</td><td style="color:${BRAND_BROWN};">${age}</td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px;">סוג עור</td><td style="color:${BRAND_BROWN};">${skinType}</td></tr>
+              <tr><td style="padding:6px 0; color:${TEXT_MUTED}; font-size:12px; vertical-align:top;">תלונות</td><td style="color:${BRAND_BROWN};">${(concerns || []).join(", ")}</td></tr>
+            </table>
+
+            <hr style="border:none; border-top:1px solid ${BORDER_COLOR}; margin:18px 0;" />
+
+            <h3 style="color:${BRAND_BROWN}; font-size:14px; margin:0 0 10px;">מוצרים שהומלצו:</h3>
+            <ul style="margin:0; padding:0 18px; list-style:none;">${productsListHtml}</ul>
+
+            ${result.skin_analysis?.root_cause_analysis ? `
+            <hr style="border:none; border-top:1px solid ${BORDER_COLOR}; margin:18px 0;" />
+            <h3 style="color:${BRAND_BROWN}; font-size:14px; margin:0 0 8px;">ניתוח עור:</h3>
+            <p style="color:${TEXT_BODY}; font-size:13px; line-height:1.6; margin:0;">${result.skin_analysis.root_cause_analysis}</p>
+            ` : ""}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:12px 24px 20px; text-align:center; border-top:1px solid ${BORDER_COLOR};">
+            <p style="color:${TEXT_MUTED}; font-size:11px; margin:0;">כל הלידים שמורים ב-Wix CMS תחת Collections → leads</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ from, to: adminTo, subject, html }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Resend lead notification error ${res.status}: ${body}`);
+  }
+}
+
 export async function sendRecommendationsEmail({ to, customerName, skinAnalysis, recommendations, routineSuggestion, generalAdvice }) {
   const apiKey = process.env.RESEND_API_KEY;
   const from   = process.env.RESEND_FROM || "Lilachi <onboarding@resend.dev>";

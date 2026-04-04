@@ -4,7 +4,8 @@ import cors from "cors";
 import { getProducts } from "./services/wix.js";
 import { analyzeAndRecommend } from "./services/claude.js";
 import { sendOTP, verifyOTP, validateToken } from "./services/otp.js";
-import { sendRecommendationsEmail } from "./services/email.js";
+import { sendRecommendationsEmail, sendLeadNotification } from "./services/email.js";
+import { saveLead } from "./services/leads.js";
 
 const app = express();
 app.use(cors());
@@ -183,10 +184,17 @@ app.post("/api/recommend", async (req, res) => {
       routineSuggestion: result.routine_suggestion,
       generalAdvice: result.general_advice,
     }).then(() => {
-      console.log(`[email] Recommendations sent to ${email}`);
+      console.log(`[email] Recommendations sent to ${session.email}`);
     }).catch((err) => {
-      console.error(`[email] Failed to send recommendations to ${email}:`, err.message);
+      console.error(`[email] Failed to send recommendations to ${session.email}:`, err.message);
     });
+
+    // Fire-and-forget — save lead to Wix CMS + notify admin
+    saveLead(req.body, session.email, result)
+      .catch((err) => console.error("[leads] Failed to save lead:", err.message));
+
+    sendLeadNotification({ email: session.email, inputs: req.body, result })
+      .catch((err) => console.error("[leads] Failed to send admin notification:", err.message));
 
   } catch (err) {
     console.error(err);
