@@ -153,6 +153,33 @@ body {
   margin-top: 4px;
 }
 
+/* Photo options */
+.photo-options {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.btn-photo-option {
+  flex: 1;
+  padding: 20px 16px;
+  border: 2px solid #ddd5cf;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #4a3728;
+  font-weight: 600;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: center;
+}
+.btn-photo-option:hover {
+  border-color: #c9836a;
+  background: #fef6f3;
+}
+.btn-photo-option:active {
+  background: #f9ebe5;
+}
+
 /* Upload */
 .upload-area {
   border: 2px dashed #ddd5cf;

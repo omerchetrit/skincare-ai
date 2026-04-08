@@ -142,9 +142,22 @@ function compressImage(file) {
 // --- Photo upload ---
 function setupPhotoUpload() {
   const input = document.getElementById("photoInput");
+  const cameraInput = document.getElementById("cameraInput");
   const area = document.getElementById("uploadArea");
   const preview = document.getElementById("photoPreview");
   const icon = area.querySelector(".upload-icon");
+  const photoOptions = document.querySelector(".photo-options");
+
+  function showPreview(dataUrl) {
+    area.style.display = "block";
+    photoOptions.style.display = "none";
+    photoDataUrl = dataUrl;
+    preview.src = dataUrl;
+    preview.style.display = "block";
+    icon.style.display = "none";
+    area.querySelectorAll("p").forEach((p) => (p.style.display = "none"));
+    area.classList.add("has-photo");
+  }
 
   function resetUploadArea() {
     icon.textContent = "📷";
@@ -153,6 +166,8 @@ function setupPhotoUpload() {
     preview.style.display = "none";
     preview.src = "";
     area.classList.remove("has-photo");
+    area.style.display = "none";
+    photoOptions.style.display = "";
     photoDataUrl = "";
   }
 
@@ -161,33 +176,44 @@ function setupPhotoUpload() {
     e.stopPropagation();
     resetUploadArea();
     input.value = "";
+    cameraInput.value = "";
   });
 
-  input.addEventListener("change", async (e) => {
-    const file = e.target.files[0];
+  // Button: take photo with camera
+  document.getElementById("btnTakePhoto").addEventListener("click", () => {
+    cameraInput.click();
+  });
+
+  // Button: upload from gallery
+  document.getElementById("btnUploadPhoto").addEventListener("click", () => {
+    input.click();
+  });
+
+  async function handleFile(file) {
     if (!file) return;
     if (file.size > 25 * 1024 * 1024) {
       alert("התמונה שבחרת כבדה מדי (מעל 25MB). נסי לשלוח תמונה שצולמה בפחות זום.");
       return;
     }
 
-    // Show spinner while compressing
+    // Show upload area with spinner
+    area.style.display = "block";
+    photoOptions.style.display = "none";
     icon.textContent = "⏳";
     icon.style.display = "";
 
     try {
       const compressed = await compressImage(file);
-      photoDataUrl = compressed;
-      preview.src = photoDataUrl;
-      preview.style.display = "block";
-      icon.style.display = "none";
-      area.querySelectorAll("p").forEach((p) => (p.style.display = "none"));
-      area.classList.add("has-photo");
+      showPreview(compressed);
     } catch (err) {
       icon.textContent = "📷";
       alert("לא הצלחנו לעבד את התמונה. נסי תמונה אחרת.");
+      resetUploadArea();
     }
-  });
+  }
+
+  input.addEventListener("change", (e) => handleFile(e.target.files[0]));
+  cameraInput.addEventListener("change", (e) => handleFile(e.target.files[0]));
 
   // Drag & drop
   area.addEventListener("dragover", (e) => { e.preventDefault(); area.style.borderColor = "#c9836a"; });
@@ -197,10 +223,7 @@ function setupPhotoUpload() {
     area.style.borderColor = "";
     if (area.classList.contains("has-photo")) return;
     const file = e.dataTransfer.files[0];
-    if (file) {
-      input.files = e.dataTransfer.files;
-      input.dispatchEvent(new Event("change"));
-    }
+    if (file) handleFile(file);
   });
 }
 
@@ -556,6 +579,10 @@ function restart() {
   document.getElementById("photoPreview").style.display = "none";
   document.getElementById("photoPreview").src = "";
   area.classList.remove("has-photo");
+  area.style.display = "none";
+  document.querySelector(".photo-options").style.display = "";
+  document.getElementById("photoInput").value = "";
+  document.getElementById("cameraInput").value = "";
 
   document.querySelectorAll(".pill").forEach((p) => p.classList.remove("selected"));
 
