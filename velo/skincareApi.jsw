@@ -1,0 +1,46 @@
+/**
+ * Backend web module — proxies calls to Railway API.
+ * Create this file in Wix Editor: Backend → New Web Module → skincareApi.jsw
+ */
+import { fetch } from 'wix-fetch';
+
+const API_BASE = 'https://app.lilachi.com';
+
+export async function sendOTP(email) {
+  const res = await fetch(`${API_BASE}/api/send-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || 'שגיאה בשליחת קוד אימות');
+  }
+  return res.json();
+}
+
+export async function verifyOTP(email, code, phone) {
+  const res = await fetch(`${API_BASE}/api/verify-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, code, phone }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || 'קוד שגוי');
+  }
+  return res.json();
+}
+
+export async function getRecommendations(payload) {
+  const res = await fetch(`${API_BASE}/api/recommend`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || 'שגיאה בקבלת המלצות');
+  }
+  return res.json();
+}
