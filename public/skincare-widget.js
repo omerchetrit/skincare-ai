@@ -139,6 +139,8 @@ class SkincareWidget extends HTMLElement {
     this.$(`#step${this._currentStep}`).classList.add("active");
     this.$("#progressFill").style.width = `${(this._currentStep / this._totalSteps) * 100}%`;
     this.$("#stepLabel").textContent = `שלב ${this._currentStep} מתוך ${this._totalSteps}`;
+    // Only show header intro text on step 1
+    this.$(".header").style.display = n === 1 ? "block" : "none";
     this.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 

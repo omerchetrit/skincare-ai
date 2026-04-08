@@ -18,6 +18,8 @@ function goToStep(n) {
   document.querySelector(`#step${currentStep}`).classList.add("active");
   document.getElementById("progressFill").style.width = `${(currentStep / totalSteps) * 100}%`;
   document.getElementById("stepLabel").textContent = `שלב ${currentStep} מתוך ${totalSteps}`;
+  // Only show header intro text on step 1
+  document.querySelector(".header").style.display = n === 1 ? "block" : "none";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
