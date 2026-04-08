@@ -1,6 +1,6 @@
 /**
  * Branded recommendations email — sent after Claude returns results.
- * Uses Resend HTTP API (same as OTP flow).
+ * Uses Brevo (ex-Sendinblue) HTTP API (same as OTP flow).
  */
 
 const BRAND_BROWN   = "#4a3728";
@@ -133,11 +133,12 @@ function buildEmailHtml({ customerName, skinAnalysis, recommendations, routineSu
 }
 
 export async function sendLeadNotification({ email, inputs, result }) {
-  const apiKey   = process.env.RESEND_API_KEY;
-  const adminTo  = process.env.ADMIN_EMAIL;
-  const from     = process.env.RESEND_FROM || "Lilachi <onboarding@resend.dev>";
+  const apiKey      = process.env.BREVO_API_KEY;
+  const adminTo     = process.env.ADMIN_EMAIL;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || "lilach@lilachi.com";
+  const senderName  = process.env.BREVO_SENDER_NAME  || "Lilachi";
   if (!apiKey || !adminTo) {
-    console.warn("[email] RESEND_API_KEY or ADMIN_EMAIL not set — skipping lead notification");
+    console.warn("[email] BREVO_API_KEY or ADMIN_EMAIL not set — skipping lead notification");
     return;
   }
 
@@ -228,37 +229,48 @@ export async function sendLeadNotification({ email, inputs, result }) {
 </body>
 </html>`;
 
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to: adminTo, subject, html }),
+    headers: { "api-key": apiKey, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sender: { name: senderName, email: senderEmail },
+      to: [{ email: adminTo }],
+      subject,
+      htmlContent: html,
+    }),
   });
 
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`Resend lead notification error ${res.status}: ${body}`);
+    throw new Error(`Brevo lead notification error ${res.status}: ${body}`);
   }
 }
 
 export async function sendRecommendationsEmail({ to, customerName, skinAnalysis, recommendations, routineSuggestion, generalAdvice }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from   = process.env.RESEND_FROM || "Lilachi <onboarding@resend.dev>";
-  if (!apiKey) { console.warn("[email] RESEND_API_KEY not set — skipping recommendations email"); return; }
+  const apiKey      = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || "lilach@lilachi.com";
+  const senderName  = process.env.BREVO_SENDER_NAME  || "Lilachi";
+  if (!apiKey) { console.warn("[email] BREVO_API_KEY not set — skipping recommendations email"); return; }
 
   const firstName = (customerName || "").split(" ")[0] || "";
   const subject   = firstName ? `${firstName}, הדו״ח האישי שלך מ-Lilachi 🌿` : "הדו״ח האישי שלך מ-Lilachi 🌿";
 
   const html = buildEmailHtml({ customerName, skinAnalysis, recommendations, routineSuggestion, generalAdvice });
 
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from, to, subject, html }),
+    headers: { "api-key": apiKey, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      sender: { name: senderName, email: senderEmail },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    }),
   });
 
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`Resend error ${res.status}: ${body}`);
+    throw new Error(`Brevo error ${res.status}: ${body}`);
   }
 
   return await res.json();

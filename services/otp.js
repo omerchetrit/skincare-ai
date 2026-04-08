@@ -1,11 +1,11 @@
 /**
  * OTP service — email verification before Claude API call
- * Uses Resend HTTP API (no SMTP — works on Railway).
+ * Uses Brevo (ex-Sendinblue) HTTP API (no SMTP — works on Railway).
  *
  * Required env vars:
- *   RESEND_API_KEY  — from resend.com (free tier: 3,000 emails/month)
- *   RESEND_FROM     — sender address, e.g. "Lilachi <hello@lilachi.com>"
- *                     or "Lilachi <onboarding@resend.dev>" for testing
+ *   BREVO_API_KEY       — from brevo.com (free tier: 300 emails/day)
+ *   BREVO_SENDER_EMAIL  — verified sender email (e.g. lilach@lilachi.com)
+ *   BREVO_SENDER_NAME   — sender display name (default: "Lilachi")
  */
 
 import crypto from "crypto";
@@ -30,10 +30,11 @@ function generateOTP() {
 }
 
 async function sendEmail(to, otp) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM || "Lilachi <onboarding@resend.dev>";
+  const apiKey     = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || "lilach@lilachi.com";
+  const senderName  = process.env.BREVO_SENDER_NAME  || "Lilachi";
 
-  if (!apiKey) throw new Error("RESEND_API_KEY is not set");
+  if (!apiKey) throw new Error("BREVO_API_KEY is not set");
 
   const html = `
     <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px; background: #fdf9f7; border-radius: 16px; border: 1px solid #f0e6e0;">
@@ -48,23 +49,23 @@ async function sendEmail(to, otp) {
     </div>
   `;
 
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      "api-key": apiKey,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from,
-      to,
+      sender: { name: senderName, email: senderEmail },
+      to: [{ email: to }],
       subject: "קוד האימות שלך מ-lilachi",
-      html,
+      htmlContent: html,
     }),
   });
 
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`Resend API error ${res.status}: ${body}`);
+    throw new Error(`Brevo API error ${res.status}: ${body}`);
   }
 
   return await res.json();
