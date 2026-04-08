@@ -150,6 +150,16 @@
           </button>
         </div>
 
+        <!-- Live camera viewfinder -->
+        <div class="camera-viewfinder" id="cameraViewfinder" style="display:none;">
+          <video id="cameraVideo" autoplay playsinline muted></video>
+          <div class="camera-controls">
+            <button type="button" class="btn-camera-snap" id="btnSnap">📸</button>
+            <button type="button" class="btn-camera-cancel" id="btnCancelCamera">ביטול</button>
+          </div>
+        </div>
+        <canvas id="cameraCanvas" style="display:none;"></canvas>
+
         <div class="upload-area" id="uploadArea" style="display:none;">
           <div class="upload-icon">📷</div>
           <p>לחצי להעלאה או גררי לכאן</p>
@@ -157,7 +167,6 @@
           <img id="photoPreview" src="" alt="" style="display:none;" />
         </div>
         <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" />
-        <input type="file" id="cameraInput" accept="image/jpeg,image/png,image/webp" capture="user" style="display:none;" />
 
         <div class="privacy-note">🔒 התמונה נשלחת בצורה מאובטחת לניתוח בלבד ואינה נשמרת בשרתינו.</div>
 

@@ -96,6 +96,16 @@ function setupMultiPills(containerId, arr) {
   });
 }
 
+// --- Helper: convert data URL to File for compressImage ---
+function dataUrlToFile(dataUrl) {
+  const [header, data] = dataUrl.split(",");
+  const mime = header.match(/:(.*?);/)[1];
+  const binary = atob(data);
+  const arr = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+  return new File([arr], "camera.jpg", { type: mime });
+}
+
 // --- Image compression (keeps quality high, stays under Claude API 5MB limit) ---
 function compressImage(file) {
   return new Promise((resolve, reject) => {
@@ -142,13 +152,17 @@ function compressImage(file) {
 // --- Photo upload ---
 function setupPhotoUpload() {
   const input = document.getElementById("photoInput");
-  const cameraInput = document.getElementById("cameraInput");
   const area = document.getElementById("uploadArea");
   const preview = document.getElementById("photoPreview");
   const icon = area.querySelector(".upload-icon");
   const photoOptions = document.querySelector(".photo-options");
+  const viewfinder = document.getElementById("cameraViewfinder");
+  const video = document.getElementById("cameraVideo");
+  const canvas = document.getElementById("cameraCanvas");
+  let cameraStream = null;
 
   function showPreview(dataUrl) {
+    viewfinder.style.display = "none";
     area.style.display = "block";
     photoOptions.style.display = "none";
     photoDataUrl = dataUrl;
@@ -159,7 +173,17 @@ function setupPhotoUpload() {
     area.classList.add("has-photo");
   }
 
+  function stopCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((t) => t.stop());
+      cameraStream = null;
+    }
+    video.srcObject = null;
+    viewfinder.style.display = "none";
+  }
+
   function resetUploadArea() {
+    stopCamera();
     icon.textContent = "📷";
     icon.style.display = "";
     area.querySelectorAll("p").forEach((p) => (p.style.display = ""));
@@ -176,12 +200,46 @@ function setupPhotoUpload() {
     e.stopPropagation();
     resetUploadArea();
     input.value = "";
-    cameraInput.value = "";
   });
 
-  // Button: take photo with camera
-  document.getElementById("btnTakePhoto").addEventListener("click", () => {
-    cameraInput.click();
+  // Button: take photo with camera (getUserMedia)
+  document.getElementById("btnTakePhoto").addEventListener("click", async () => {
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 960 } },
+        audio: false,
+      });
+      video.srcObject = cameraStream;
+      photoOptions.style.display = "none";
+      viewfinder.style.display = "block";
+    } catch (err) {
+      alert("לא הצלחנו לגשת למצלמה. בדקי שנתת הרשאה, או העלי תמונה מהגלריה.");
+    }
+  });
+
+  // Snap button — capture frame from video
+  document.getElementById("btnSnap").addEventListener("click", async () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1); // mirror to match viewfinder
+    ctx.drawImage(video, 0, 0);
+    stopCamera();
+
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+    try {
+      const compressed = await compressImage(dataUrlToFile(dataUrl));
+      showPreview(compressed);
+    } catch {
+      showPreview(dataUrl); // fallback: use uncompressed
+    }
+  });
+
+  // Cancel camera
+  document.getElementById("btnCancelCamera").addEventListener("click", () => {
+    stopCamera();
+    photoOptions.style.display = "";
   });
 
   // Button: upload from gallery
@@ -196,7 +254,6 @@ function setupPhotoUpload() {
       return;
     }
 
-    // Show upload area with spinner
     area.style.display = "block";
     photoOptions.style.display = "none";
     icon.textContent = "⏳";
@@ -213,7 +270,6 @@ function setupPhotoUpload() {
   }
 
   input.addEventListener("change", (e) => handleFile(e.target.files[0]));
-  cameraInput.addEventListener("change", (e) => handleFile(e.target.files[0]));
 
   // Drag & drop
   area.addEventListener("dragover", (e) => { e.preventDefault(); area.style.borderColor = "#c9836a"; });
@@ -581,8 +637,8 @@ function restart() {
   area.classList.remove("has-photo");
   area.style.display = "none";
   document.querySelector(".photo-options").style.display = "";
+  document.getElementById("cameraViewfinder").style.display = "none";
   document.getElementById("photoInput").value = "";
-  document.getElementById("cameraInput").value = "";
 
   document.querySelectorAll(".pill").forEach((p) => p.classList.remove("selected"));
 

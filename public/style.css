@@ -180,6 +180,53 @@ body {
   background: #f9ebe5;
 }
 
+/* Camera viewfinder */
+.camera-viewfinder {
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  background: #000;
+  margin-bottom: 16px;
+}
+.camera-viewfinder video {
+  width: 100%;
+  display: block;
+  border-radius: 14px;
+  transform: scaleX(-1); /* mirror for selfie */
+}
+.camera-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: rgba(0,0,0,0.4);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.btn-camera-snap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background: #c9836a;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.btn-camera-snap:active { transform: scale(0.9); }
+.btn-camera-cancel {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.6);
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
 /* Upload */
 .upload-area {
   border: 2px dashed #ddd5cf;
