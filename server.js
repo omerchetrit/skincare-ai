@@ -211,6 +211,77 @@ app.get("/api/products", async (_req, res) => {
   }
 });
 
+// POST /api/create-checkout
+// Body: { productIds: ["id1", "id2", ...] }
+// Creates a Wix eCommerce checkout and returns a redirect URL
+app.post("/api/create-checkout", async (req, res) => {
+  const { productIds } = req.body;
+  if (!productIds?.length) {
+    return res.status(400).json({ error: "לא נבחרו מוצרים." });
+  }
+
+  const apiKey = process.env.WIX_API_KEY;
+  const siteId = process.env.WIX_SITE_ID;
+  if (!apiKey || !siteId) {
+    return res.status(500).json({ error: "הגדרות חנות חסרות." });
+  }
+
+  try {
+    // 1. Create checkout with line items
+    const lineItems = productIds.map((id) => ({
+      catalogReference: {
+        catalogItemId: id,
+        appId: "1380b703-ce81-ff05-f115-39571d94dfcd", // Wix Stores app ID
+      },
+      quantity: 1,
+    }));
+
+    const checkoutRes = await fetch("https://www.wixapis.com/ecom/v1/checkouts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: apiKey,
+        "wix-site-id": siteId,
+      },
+      body: JSON.stringify({ lineItems, channelType: "OTHER_PLATFORM" }),
+    });
+
+    if (!checkoutRes.ok) {
+      const errBody = await checkoutRes.text();
+      console.error("[checkout] Create checkout failed:", checkoutRes.status, errBody);
+      throw new Error("שגיאה ביצירת עגלה.");
+    }
+
+    const { checkout } = await checkoutRes.json();
+    console.log(`[checkout] Created checkout ${checkout.id} with ${productIds.length} items`);
+
+    // 2. Create redirect session to get checkout URL
+    const redirectRes = await fetch("https://www.wixapis.com/redirects-api/v1/redirect-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: apiKey,
+        "wix-site-id": siteId,
+      },
+      body: JSON.stringify({
+        ecomCheckout: { checkoutId: checkout.id },
+      }),
+    });
+
+    if (!redirectRes.ok) {
+      const errBody = await redirectRes.text();
+      console.error("[checkout] Redirect session failed:", redirectRes.status, errBody);
+      throw new Error("שגיאה ביצירת קישור לתשלום.");
+    }
+
+    const { redirectSession } = await redirectRes.json();
+    res.json({ checkoutUrl: redirectSession.fullUrl });
+  } catch (err) {
+    console.error("[checkout]", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Skincare AI running on http://localhost:${PORT}`);

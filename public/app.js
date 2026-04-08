@@ -150,6 +150,8 @@ function compressImage(file) {
 }
 
 // --- Photo upload ---
+let cameraStream = null;
+
 function setupPhotoUpload() {
   const input = document.getElementById("photoInput");
   const area = document.getElementById("uploadArea");
@@ -159,27 +161,17 @@ function setupPhotoUpload() {
   const viewfinder = document.getElementById("cameraViewfinder");
   const video = document.getElementById("cameraVideo");
   const canvas = document.getElementById("cameraCanvas");
-  let cameraStream = null;
 
   function showPreview(dataUrl) {
-    viewfinder.style.display = "none";
     area.style.display = "block";
     photoOptions.style.display = "none";
+    viewfinder.style.display = "none";
     photoDataUrl = dataUrl;
     preview.src = dataUrl;
     preview.style.display = "block";
     icon.style.display = "none";
     area.querySelectorAll("p").forEach((p) => (p.style.display = "none"));
     area.classList.add("has-photo");
-  }
-
-  function stopCamera() {
-    if (cameraStream) {
-      cameraStream.getTracks().forEach((t) => t.stop());
-      cameraStream = null;
-    }
-    video.srcObject = null;
-    viewfinder.style.display = "none";
   }
 
   function resetUploadArea() {
@@ -195,6 +187,14 @@ function setupPhotoUpload() {
     photoDataUrl = "";
   }
 
+  function stopCamera() {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((t) => t.stop());
+      cameraStream = null;
+    }
+    viewfinder.style.display = "none";
+  }
+
   // Allow re-clicking the photo to change it
   preview.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -202,7 +202,7 @@ function setupPhotoUpload() {
     input.value = "";
   });
 
-  // Button: take photo with camera (getUserMedia)
+  // Button: take photo — opens live camera viewfinder
   document.getElementById("btnTakePhoto").addEventListener("click", async () => {
     try {
       cameraStream = await navigator.mediaDevices.getUserMedia({
@@ -210,10 +210,11 @@ function setupPhotoUpload() {
         audio: false,
       });
       video.srcObject = cameraStream;
-      photoOptions.style.display = "none";
       viewfinder.style.display = "block";
+      photoOptions.style.display = "none";
     } catch (err) {
-      alert("לא הצלחנו לגשת למצלמה. בדקי שנתת הרשאה, או העלי תמונה מהגלריה.");
+      console.error("Camera error:", err);
+      alert("לא הצלחנו לגשת למצלמה. ודאי שאישרת גישה למצלמה בדפדפן.");
     }
   });
 
@@ -221,18 +222,17 @@ function setupPhotoUpload() {
   document.getElementById("btnSnap").addEventListener("click", async () => {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1); // mirror to match viewfinder
-    ctx.drawImage(video, 0, 0);
+    canvas.getContext("2d").drawImage(video, 0, 0);
     stopCamera();
 
     const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+    const file = dataUrlToFile(dataUrl);
     try {
-      const compressed = await compressImage(dataUrlToFile(dataUrl));
+      const compressed = await compressImage(file);
       showPreview(compressed);
     } catch {
-      showPreview(dataUrl); // fallback: use uncompressed
+      alert("לא הצלחנו לעבד את התמונה. נסי שוב.");
+      resetUploadArea();
     }
   });
 
@@ -574,28 +574,28 @@ function showError(show, msg = "") {
 }
 
 // --- Cart ---
-function addToCart(productId, btn) {
-  window.parent.postMessage({ type: "addToCart", productIds: [productId] }, "*");
-  if (btn) {
-    btn.textContent = "✓ נוסף לסל";
-    btn.disabled = true;
-    btn.classList.add("btn-add-cart--added");
+async function addToCart(productIds, btn) {
+  if (!Array.isArray(productIds)) productIds = [productIds];
+  if (btn) { btn.textContent = "⏳"; btn.disabled = true; }
+
+  try {
+    const res = await fetch("/api/create-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productIds }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "שגיאה ביצירת הזמנה");
+    window.location.href = data.checkoutUrl;
+  } catch (err) {
+    alert("לא הצלחנו לפתוח את העגלה. נסי שוב.");
+    if (btn) { btn.textContent = "🛒 הוסיפי לסל"; btn.disabled = false; }
   }
 }
 
 function addAllToCart(productIds) {
-  window.parent.postMessage({ type: "addToCart", productIds }, "*");
   const btn = document.getElementById("addAllToCartBtn");
-  if (btn) {
-    btn.textContent = "✓ כל המוצרים נוספו לסל";
-    btn.disabled = true;
-  }
-  // Also mark individual buttons
-  document.querySelectorAll(".btn-add-cart").forEach((b) => {
-    b.textContent = "✓ נוסף";
-    b.disabled = true;
-    b.classList.add("btn-add-cart--added");
-  });
+  addToCart(productIds, btn);
 }
 
 // --- Restart ---
@@ -637,6 +637,10 @@ function restart() {
   area.classList.remove("has-photo");
   area.style.display = "none";
   document.querySelector(".photo-options").style.display = "";
+  if (cameraStream) {
+    cameraStream.getTracks().forEach((t) => t.stop());
+    cameraStream = null;
+  }
   document.getElementById("cameraViewfinder").style.display = "none";
   document.getElementById("photoInput").value = "";
 
@@ -666,15 +670,3 @@ setupSinglePills("skinTypePills", (v) => {
 setupMultiPills("concernsPills", concerns);
 setupPhotoUpload();
 
-// --- Wix iframe auto-resize ---
-// Reports the page height to the parent Wix page so the iframe resizes dynamically
-function reportHeight() {
-  const height = document.documentElement.scrollHeight;
-  window.parent.postMessage({ type: "skincareAiHeight", height }, "*");
-}
-reportHeight();
-new MutationObserver(reportHeight).observe(document.body, {
-  subtree: true,
-  childList: true,
-  attributes: true,
-});
