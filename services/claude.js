@@ -1,7 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { BUSINESS_RULES } from "./business-rules.js";
 import { PRODUCT_KNOWLEDGE } from "./product-knowledge.js";
-import { getBrandContext } from "./brand.js";
+import { loadBrandGuidelines, loadCorrections } from "./brand.js";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -136,14 +135,11 @@ Sensitivities/allergies: ${sensitivities || "none mentioned"}
 Texture preference: ${texturePreference === "light" ? "light/fast-absorbing" : texturePreference === "rich" ? "rich/nourishing" : "no preference stated"}
 Pregnancy / breastfeeding status: ${pregnancyLabel}`.trim();
 
-  const textureLine = `- Texture preference stated by user: ${texturePreference === "light" ? "prefer LIGHT creams" : texturePreference === "rich" ? "prefer RICH creams" : "no preference — use best judgment"}.`;
-  const businessRules = BUSINESS_RULES.replace(
-    "- Texture preference stated by user: follow it when choosing between cream options.",
-    textureLine
-  );
+  const textureLine = texturePreference === "light" ? "prefer LIGHT creams" : texturePreference === "rich" ? "prefer RICH creams" : "no preference — use best judgment";
 
-  // Brand guidelines + corrections loaded fresh on every request (hot-reloadable)
-  const brandContext = getBrandContext();
+  // All rules loaded fresh from brand/guidelines.md on every request (hot-reloadable)
+  const guidelines = loadBrandGuidelines().replace("{{TEXTURE_PREFERENCE}}", textureLine);
+  const corrections = loadCorrections();
 
   // Build message content — image is optional
   const messageContent = [];
@@ -165,11 +161,13 @@ Pregnancy / breastfeeding status: ${pregnancyLabel}`.trim();
 USER PROFILE:
 ${userProfile}
 
-${businessRules}
-
 ${PRODUCT_KNOWLEDGE}
 
-${brandContext}
+=== BRAND GUIDELINES & BUSINESS RULES ===
+${guidelines}
+=== END GUIDELINES ===
+
+${corrections}
 
 LIVE PRODUCT CATALOG (select products using the [id: ...] value — never invent IDs):
 ${productCatalog}`,

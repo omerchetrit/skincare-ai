@@ -2,3 +2,5 @@
 node_modules/
 carrier-cache.json
 .claude/
+.DS_Store
+.tmp.driveupload/

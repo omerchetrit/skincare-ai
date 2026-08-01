@@ -748,6 +748,7 @@ class SkincareWidget extends HTMLElement {
               <button type="button" class="pill" data-value="combination">מעורב</button>
               <button type="button" class="pill" data-value="normal">רגיל</button>
               <button type="button" class="pill" data-value="sensitive">רגיש</button>
+              <button type="button" class="pill" data-value="unknown">לא יודעת</button>
               <button type="button" class="pill" data-value="other">אחר</button>
             </div>
             <input type="text" id="skinTypeOther" placeholder="תארי את סוג העור שלך..." style="display:none; margin-top:10px;" />
@@ -763,6 +764,7 @@ class SkincareWidget extends HTMLElement {
           <span class="field-error" id="concernsError"></span>
           <div class="pills multi" id="concernsPills">
             <button type="button" class="pill" data-value="acne" data-label="אקנה">אקנה</button>
+            <button type="button" class="pill" data-value="pimples" data-label="פצעונים">פצעונים</button>
             <button type="button" class="pill" data-value="blackheads" data-label="ראשים שחורים">ראשים שחורים</button>
             <button type="button" class="pill" data-value="hormonal acne" data-label="אקנה הורמונלי">אקנה הורמונלי</button>
             <button type="button" class="pill" data-value="oily skin" data-label="עור שמן">עור שמן</button>

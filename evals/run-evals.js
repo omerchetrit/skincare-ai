@@ -39,9 +39,15 @@ async function runEval(tc, products) {
       products,
     });
 
+    // Resolve product names from catalog (name lookup lives in server.js, not claude.js)
+    result.recommendations = result.recommendations.map((r) => {
+      const p = products.find((cp) => cp.id === r.product_id);
+      return { ...r, product_name: p?.name || r.product_id };
+    });
+
     console.log(`\n  ✅ Recommendations (${result.recommendations.length} products):`);
     result.recommendations.forEach((r, i) => {
-      console.log(`    ${i + 1}. [${r.priority.toUpperCase()}] ${r.product_name} (id: ${r.product_id})`);
+      console.log(`    ${i + 1}. [${r.priority.toUpperCase()}] ${r.product_name}`);
     });
 
     // Check must_not_include
